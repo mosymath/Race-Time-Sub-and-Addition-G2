@@ -1,0 +1,3446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mosy Math Adventure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Cinzel:wght@700;900&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --gold-primary: #FFD54F;
+      --gold-deep: #B78103;
+      --gold-sheen: #FFF9C4;
+      --mana-cyan: #00F5D4;
+      --mana-purple: #9D4EDD;
+      --mana-ruby: #FF2E93;
+      --mana-blue: #00B4D8;
+      --bg-dark: #0A0D18;
+      --card-bg: #14192D;
+      --card-border: #2A3660;
+    }
+
+    * {
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 8%, #1E2342 0%, #0D1021 55%, #05060D 100%);
+      font-family: 'Outfit', 'Fredoka', system-ui, sans-serif;
+      color: #FFFFFF;
+      overflow-x: hidden;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 2026 Royale Gold Beveled Card Frame */
+    .royale-card {
+      background: linear-gradient(180deg, rgba(26, 32, 59, 0.94) 0%, rgba(14, 18, 36, 0.98) 100%);
+      border: 2px solid #D4AF37;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), 
+                  inset 0 1px 1px rgba(255, 255, 255, 0.25),
+                  0 0 18px rgba(212, 175, 55, 0.2);
+      backdrop-filter: blur(16px);
+      position: relative;
+    }
+
+    /* Rush Royale Style Gilded Corner Brackets */
+    .royale-card::before, .royale-card::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border: 2px solid #FFE082;
+      pointer-events: none;
+    }
+    .royale-card::before {
+      top: -2px;
+      left: -2px;
+      border-right: none;
+      border-bottom: none;
+      border-top-left-radius: 12px;
+    }
+    .royale-card::after {
+      bottom: -2px;
+      right: -2px;
+      border-left: none;
+      border-top: none;
+      border-bottom-right-radius: 12px;
+    }
+
+    /* Tactile Battle Card Button (Rush Royale Deck Style) */
+    .battle-card-btn {
+      position: relative;
+      border-radius: 18px;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.1s ease;
+      transform: translateY(0);
+      overflow: hidden;
+      border: 2.5px solid #FFD54F;
+    }
+    .battle-card-btn:active:not(:disabled) {
+      transform: translateY(4px) scale(0.98);
+    }
+
+    .card-ruby {
+      background: linear-gradient(180deg, #FF4081 0%, #D81B60 45%, #880E4F 100%);
+      box-shadow: 0 7px 0 #560631, 0 12px 20px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    }
+    .card-ruby:active:not(:disabled) {
+      box-shadow: 0 2px 0 #560631, 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-azure {
+      background: linear-gradient(180deg, #00D2FF 0%, #0084FF 45%, #004DB8 100%);
+      box-shadow: 0 7px 0 #002D6E, 0 12px 20px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    }
+    .card-azure:active:not(:disabled) {
+      box-shadow: 0 2px 0 #002D6E, 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-emerald {
+      background: linear-gradient(180deg, #00F5D4 0%, #00BFA5 45%, #00695C 100%);
+      box-shadow: 0 7px 0 #00443C, 0 12px 20px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    }
+    .card-emerald:active:not(:disabled) {
+      box-shadow: 0 2px 0 #00443C, 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-gold {
+      background: linear-gradient(180deg, #FFE082 0%, #FFB300 45%, #D47700 100%);
+      box-shadow: 0 7px 0 #7A4200, 0 12px 20px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+      color: #381E00 !important;
+    }
+    .card-gold:active:not(:disabled) {
+      box-shadow: 0 2px 0 #7A4200, 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Metallic Gold Action Button */
+    .btn-gold-action {
+      background: linear-gradient(180deg, #FFF176 0%, #FFC107 40%, #E68A00 100%);
+      border: 2px solid #FFFDE7;
+      box-shadow: 0 6px 0 #8A4F00, 0 10px 22px rgba(255, 193, 7, 0.35);
+      color: #3D2200;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+    }
+    .btn-gold-action:active:not(:disabled) {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #8A4F00, 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Glossy Prism Sheen Overlay */
+    .card-gloss {
+      position: absolute;
+      top: 1px;
+      left: 6px;
+      right: 6px;
+      height: 40%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.08) 100%);
+      border-radius: 9999px;
+      pointer-events: none;
+    }
+
+    /* Hero Roster Card Selection */
+    .hero-card {
+      border: 2px solid rgba(255, 215, 0, 0.25);
+      background: linear-gradient(165deg, rgba(32, 40, 74, 0.8) 0%, rgba(16, 20, 42, 0.95) 100%);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .hero-card:hover:not(.hero-card-selected) {
+      transform: translateY(-3px);
+      border-color: rgba(255, 215, 0, 0.6);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+    }
+    .hero-card-selected {
+      border-color: #FFD54F !important;
+      background: linear-gradient(165deg, rgba(74, 48, 130, 0.95) 0%, rgba(30, 18, 66, 0.98) 100%) !important;
+      box-shadow: 0 0 24px rgba(255, 213, 79, 0.55), inset 0 0 14px rgba(255, 213, 79, 0.3) !important;
+      transform: translateY(-5px) scale(1.04);
+    }
+
+    /* Rarity Glow Badges */
+    .badge-legendary {
+      background: linear-gradient(135deg, #FFB300 0%, #FF2E93 100%);
+      color: #FFF;
+      box-shadow: 0 0 10px rgba(255, 179, 0, 0.6);
+    }
+    .badge-mythic {
+      background: linear-gradient(135deg, #9D4EDD 0%, #00F5D4 100%);
+      color: #FFF;
+      box-shadow: 0 0 10px rgba(157, 78, 221, 0.6);
+    }
+    .badge-epic {
+      background: linear-gradient(135deg, #00B4D8 0%, #5E60CE 100%);
+      color: #FFF;
+      box-shadow: 0 0 10px rgba(0, 180, 216, 0.6);
+    }
+
+    /* 2026 Altar Scratchpad for Regrouping */
+    .altar-board {
+      background: radial-gradient(circle at 50% 30%, #1A2142 0%, #0A0D1C 100%);
+      border: 3px solid #D4AF37;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(0, 245, 212, 0.1);
+    }
+
+    @keyframes gemPulse {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(255, 213, 79, 0.7)); transform: scale(1); }
+      50% { filter: drop-shadow(0 0 16px rgba(255, 213, 79, 1)); transform: scale(1.08); }
+    }
+    .anim-gem-pulse {
+      animation: gemPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes timerAlertPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px #FF1744); }
+      50% { transform: scale(1.06); filter: drop-shadow(0 0 22px #FF1744); }
+    }
+    .anim-timer-alert {
+      animation: timerAlertPulse 0.5s infinite ease-in-out;
+    }
+
+    .shake {
+      animation: shakeAnim 0.32s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes shakeAnim {
+      10%, 90% { transform: translate3d(-3px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+      40%, 60% { transform: translate3d(5px, 0, 0); }
+    }
+
+    .char-grid-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: #FFD54F rgba(255, 255, 255, 0.08);
+    }
+    .char-grid-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .char-grid-scroll::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #FFD54F 0%, #FF8F00 100%);
+      border-radius: 9999px;
+    }
+
+    .topic-active {
+      border-color: #FFD54F !important;
+      background: linear-gradient(165deg, rgba(88, 44, 133, 0.95) 0%, rgba(35, 18, 64, 0.98) 100%) !important;
+      box-shadow: 0 0 20px rgba(255, 213, 79, 0.6) !important;
+    }
+
+    @keyframes winnerGrandPulse {
+      0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 16px rgba(255, 213, 79, 0.9)) drop-shadow(0 0 35px rgba(0, 245, 212, 0.6));
+      }
+      50% {
+        transform: scale(1.06);
+        filter: drop-shadow(0 0 28px rgba(255, 213, 79, 1)) drop-shadow(0 0 50px rgba(255, 46, 147, 0.8));
+      }
+    }
+    .winner-name-anim {
+      animation: winnerGrandPulse 1.4s infinite ease-in-out;
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 213, 79, 0.8);
+    }
+  </style>
+</head>
+
+<body class="flex flex-col items-center justify-between min-h-screen p-2 sm:p-4 lg:p-6 text-white w-full">
+
+  <header class="w-full max-w-[1920px] flex flex-wrap items-center justify-between gap-2 py-2 px-3 sm:px-5 lg:px-8 lg:py-3 royale-card rounded-2xl mb-2 sm:mb-4">
+    <!-- Royal Brand & Logo -->
+    <div class="flex items-center gap-2.5">
+      <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-amber-400 via-purple-600 to-cyan-400 p-0.5 flex items-center justify-center shadow-lg border border-yellow-200">
+        <span class="text-xl sm:text-2xl anim-gem-pulse">👑</span>
+      </div>
+      <div>
+        <h1 class="text-lg sm:text-2xl font-black tracking-wider leading-none bg-gradient-to-r from-yellow-200 via-amber-300 to-cyan-300 bg-clip-text text-transparent font-['Cinzel']">
+          MOSY MATH ADVENTURE
+        </h1>
+        <span id="headerSubLabel" class="text-[10px] sm:text-xs text-amber-300 font-extrabold uppercase tracking-widest flex items-center gap-1">
+          <span>⚡</span> 60s Grand Arena Time Attack
+        </span>
+      </div>
+    </div>
+
+    <!-- Center Badges: Rank, Hot Streak, Subject Mode, Difficulty -->
+    <div class="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+      <!-- Live Position Badge -->
+      <div id="liveRankBadge" class="flex items-center gap-1.5 px-3 py-1 bg-amber-500/25 border-2 border-amber-400 rounded-full shadow-inner">
+        <span class="text-xs sm:text-sm font-extrabold text-amber-200">RANK:</span>
+        <span id="liveRankText" class="text-sm sm:text-base font-black text-amber-300 font-['Outfit']">1st 👑</span>
+      </div>
+
+      <!-- Streak Badge -->
+      <div id="streakBadge" class="flex items-center gap-1 px-3 py-1 bg-purple-950/80 border border-purple-400/50 rounded-full">
+        <span class="text-sm sm:text-base animate-bounce">🔥</span>
+        <span id="streakCount" class="text-xs sm:text-sm font-black text-pink-300">0 STREAK</span>
+      </div>
+
+      <!-- Math Subject Toggle -->
+      <button id="topicToggleBtn" class="flex items-center gap-1.5 px-3 py-1 bg-cyan-950/90 border-2 border-cyan-400/70 rounded-full text-xs sm:text-sm font-black text-cyan-200 hover:bg-cyan-900 transition shadow cursor-pointer">
+        <span id="topicIcon">⏱️</span>
+        <span id="topicBadgeText">CLOCKS</span>
+        <span class="text-[10px] text-cyan-300 opacity-80">⇄</span>
+      </button>
+
+      <!-- Division Selector Dropdown -->
+      <div class="relative">
+        <button id="diffMenuBtn" class="px-3 py-1 text-xs sm:text-sm font-bold bg-slate-900/90 border border-amber-400/50 rounded-full hover:bg-slate-800 transition flex items-center gap-1 text-amber-200">
+          <span id="diffLabel">Adventurer</span>
+          <span class="text-[10px]">▼</span>
+        </button>
+        <div id="diffMenu" class="hidden absolute right-0 mt-2 w-52 royale-card rounded-xl overflow-hidden shadow-2xl z-50 py-1 text-xs font-bold">
+          <div class="diff-option px-3 py-2 hover:bg-white/10 cursor-pointer flex justify-between items-center text-amber-300" data-diff="rookie">
+            <span id="diffMenuOpt1">Rookie (:00, :30)</span>
+          </div>
+          <div class="diff-option px-3 py-2 hover:bg-white/10 cursor-pointer flex justify-between items-center text-cyan-300" data-diff="adventurer">
+            <span id="diffMenuOpt2">Adventurer (:15, :45)</span>
+          </div>
+          <div class="diff-option px-3 py-2 hover:bg-white/10 cursor-pointer flex justify-between items-center text-pink-300" data-diff="master">
+            <span id="diffMenuOpt3">Master (5 min)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Champion Tag & Audio Control -->
+    <div class="flex items-center gap-2">
+      <button id="activeRacerTag" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-900/80 border border-amber-400/60 text-xs font-bold text-amber-200 hover:bg-purple-800 transition shadow cursor-pointer" title="Edit Champion Name">
+        <span id="activeRacerEmoji" class="text-base lg:text-lg">🐲</span>
+        <span id="activeRacerName" class="text-amber-300 font-black lg:text-base">Champion</span>
+        <span class="text-[10px] text-purple-300 ml-0.5">✏️</span>
+      </button>
+      <button id="soundToggle" class="w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-xl bg-slate-900/90 border border-amber-400/40 flex items-center justify-center text-lg lg:text-xl hover:scale-105 active:scale-95 transition shadow-md" title="Sound Effects">
+        🔊
+      </button>
+    </div>
+  </header>
+
+  <main class="w-full max-w-[1920px] flex-1 flex flex-col gap-2 sm:gap-4 lg:gap-6">
+    
+    <!-- Track Canvas Container -->
+    <div class="relative w-full royale-card rounded-3xl p-2 sm:p-3 lg:p-5 overflow-hidden shadow-2xl flex flex-col">
+      
+      <!-- Top Track Banner with 60s Mana Stopwatch, Live Student Racer Name & Distance -->
+      <div class="flex flex-wrap items-center justify-between px-2 py-1 mb-1 lg:mb-2 text-xs font-extrabold gap-2">
+        <!-- 60-Second Mana Stopwatch HUD -->
+        <div id="stopwatchHud" class="flex items-center gap-2 px-3 lg:px-4 py-1 lg:py-1.5 bg-slate-950/90 border-2 border-amber-400/60 rounded-2xl shadow-lg">
+          <span class="text-lg lg:text-2xl">⏱️</span>
+          <div class="flex flex-col">
+            <span class="text-[9px] lg:text-[10px] text-amber-200/80 font-bold uppercase tracking-wider leading-none">ARENA TIME LEFT</span>
+            <span id="raceCountdownText" class="text-lg sm:text-2xl lg:text-3xl font-black text-amber-300 font-mono tracking-wider leading-tight">01:00</span>
+          </div>
+        </div>
+
+        <!-- Prominent Live Student Champion HUD Badge -->
+        <div class="flex items-center gap-2 px-3 lg:px-5 py-1 lg:py-1.5 bg-gradient-to-r from-amber-500/30 via-purple-600/30 to-cyan-500/30 border-2 border-amber-400 rounded-2xl shadow-md">
+          <span id="trackRacerEmoji" class="text-base sm:text-xl lg:text-2xl">🐲</span>
+          <div class="flex flex-col text-left">
+            <span class="text-[8px] sm:text-[9px] lg:text-[10px] text-amber-200/90 font-bold uppercase tracking-wider leading-none">PLAYER (LANE 1)</span>
+            <span id="trackRacerName" class="text-xs sm:text-sm lg:text-base font-black text-amber-300 tracking-wider leading-tight font-['Outfit']">CHAMPION</span>
+          </div>
+        </div>
+
+        <!-- Question Counter & Live Distance -->
+        <div class="flex items-center gap-3 lg:gap-5">
+          <div class="px-2.5 lg:px-4 py-1 lg:py-1.5 rounded-xl bg-purple-900/60 border border-purple-400/40 text-xs lg:text-sm text-amber-300 font-mono font-bold flex items-center gap-1">
+            <span>QUESTION:</span>
+            <span id="questionCounter" class="text-white text-sm lg:text-base">#1</span>
+          </div>
+          <div class="flex items-center gap-1.5 font-mono text-xs lg:text-sm px-2.5 lg:px-4 py-1 lg:py-1.5 rounded-xl bg-cyan-950/70 border border-cyan-400/50">
+            <span class="text-cyan-300">DISTANCE:</span>
+            <span id="playerDistanceText" class="text-white font-black text-sm sm:text-base lg:text-xl">0m</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Bar Progress Indicator (60s countdown) -->
+      <div class="relative w-full h-3 lg:h-4 bg-slate-950 rounded-full border border-amber-400/40 mb-2 lg:mb-3 overflow-hidden p-0.5">
+        <div id="timeProgressBar" class="h-full rounded-full bg-gradient-to-r from-pink-500 via-amber-400 to-cyan-400 transition-all duration-100" style="width: 100%;"></div>
+      </div>
+
+      <!-- Main Canvas for 4 Lanes, Racers, and Sky-Citadel Course -->
+      <div class="relative w-full h-48 sm:h-64 lg:h-[45vh] min-h-[250px] max-h-[500px] rounded-2xl overflow-hidden border-2 border-amber-400/40 shadow-inner bg-slate-950">
+        <canvas id="raceCanvas" class="w-full h-full block"></canvas>
+
+        <!-- Floating Turbo / Stumble Notification Toast -->
+        <div id="raceToast" class="pointer-events-none absolute top-4 lg:top-8 left-1/2 -translate-x-1/2 px-5 lg:px-8 py-2 lg:py-3 rounded-full font-black text-xs sm:text-base lg:text-xl tracking-wider transition-all duration-300 opacity-0 transform -translate-y-4 shadow-2xl z-30 border-2 border-yellow-200">
+          ROYALE DASH! +35m
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full royale-card rounded-3xl p-3 sm:p-5 lg:p-8 flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-12 shadow-2xl">
+      
+      <!-- Left / Center Visual Dock: 3D Celestial Chrono-Dial OR Arcane Regrouping Altar -->
+      <div id="questionVisualContainer" class="flex flex-col items-center justify-center relative min-w-[190px] sm:min-w-[240px] lg:min-w-[360px]">
+        
+        <!-- MODE 1: 3D Celestial Chrono-Dial -->
+        <div id="clockDisplayWrap" class="flex flex-col items-center justify-center relative w-full">
+          <div class="relative w-48 h-48 sm:w-60 sm:h-60 lg:w-80 lg:h-80 mx-auto">
+            <svg id="analogClockSvg" viewBox="0 0 200 200" class="w-full h-full drop-shadow-2xl">
+              <defs>
+                <radialGradient id="royaleBezel" cx="30%" cy="25%" r="75%">
+                  <stop offset="0%" stop-color="#FFF59D" />
+                  <stop offset="35%" stop-color="#FFD54F" />
+                  <stop offset="70%" stop-color="#FFA000" />
+                  <stop offset="100%" stop-color="#5D4037" />
+                </radialGradient>
+
+                <radialGradient id="dialFace" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#2A3258" />
+                  <stop offset="70%" stop-color="#151A33" />
+                  <stop offset="100%" stop-color="#0B0E1E" />
+                </radialGradient>
+
+                <linearGradient id="solarHourBlade" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#FF8A80" />
+                  <stop offset="50%" stop-color="#FF5252" />
+                  <stop offset="100%" stop-color="#B71C1C" />
+                </linearGradient>
+
+                <linearGradient id="astralMinBlade" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#80D8FF" />
+                  <stop offset="50%" stop-color="#00B0FF" />
+                  <stop offset="100%" stop-color="#004D8C" />
+                </linearGradient>
+              </defs>
+
+              <!-- Outer Bezel Ring with Gem Studs -->
+              <circle cx="100" cy="100" r="97" fill="url(#royaleBezel)" stroke="#3E2723" stroke-width="3.5" />
+              <circle cx="100" cy="100" r="87" fill="#0A0E1F" stroke="#FFD54F" stroke-width="2" />
+
+              <!-- Dial Face -->
+              <circle cx="100" cy="100" r="83" fill="url(#dialFace)" />
+
+              <!-- Constellation Ring Inlay -->
+              <circle cx="100" cy="100" r="54" fill="none" stroke="rgba(255, 213, 79, 0.25)" stroke-dasharray="3, 4" stroke-width="1.5" />
+
+              <!-- 60 Minute Tick Marks -->
+              <g id="clockTicks" stroke="#FFD54F" stroke-linecap="round"></g>
+
+              <!-- Numbers 1 to 12 in Royal Font -->
+              <g id="clockNumbers" font-family="'Cinzel', 'Outfit', sans-serif" font-weight="900" font-size="14.5" text-anchor="middle" dominant-baseline="central" fill="#FFF9C4"></g>
+
+              <!-- Hour Blade (Short & Coral-Ruby with Solar Spine) -->
+              <g id="hourHandGroup" transform="rotate(0 100 100)" class="transition-transform duration-300 ease-out">
+                <path d="M 94 54 L 100 42 L 106 54 L 104 100 L 96 100 Z" fill="url(#solarHourBlade)" stroke="#FFF" stroke-width="0.8" />
+                <line x1="100" y1="46" x2="100" y2="94" stroke="#FFF9C4" stroke-width="2" stroke-linecap="round" />
+              </g>
+
+              <!-- Minute Lance (Long & Radiant Astral Azure) -->
+              <g id="minuteHandGroup" transform="rotate(0 100 100)" class="transition-transform duration-300 ease-out">
+                <path d="M 95 26 L 100 14 L 105 26 L 103 100 L 97 100 Z" fill="url(#astralMinBlade)" stroke="#FFF" stroke-width="0.8" />
+                <line x1="100" y1="18" x2="100" y2="92" stroke="#E1F5FE" stroke-width="2" stroke-linecap="round" />
+              </g>
+
+              <!-- Center Gemstone Cap -->
+              <circle cx="100" cy="100" r="8.5" fill="#FFD54F" stroke="#8D6E63" stroke-width="2" />
+              <circle cx="100" cy="100" r="4.5" fill="#FF1744" />
+            </svg>
+
+            <!-- Color Guide Pill -->
+            <div class="absolute -bottom-2 lg:-bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 lg:px-4 py-0.5 lg:py-1 rounded-full bg-slate-950/95 border border-amber-400/60 text-[10px] lg:text-xs font-black tracking-tight whitespace-nowrap shadow-lg">
+              <span class="text-rose-400 flex items-center gap-1"><span class="w-2 h-2 lg:w-3 lg:h-3 rounded-full bg-rose-500 inline-block"></span> Hour Blade</span>
+              <span class="text-cyan-400 flex items-center gap-1"><span class="w-2 h-2 lg:w-3 lg:h-3 rounded-full bg-cyan-400 inline-block"></span> Minute Lance</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODE 2: Arcane Alchemist Scratchpad (Addition & Subtraction) -->
+        <div id="additionDisplayWrap" class="hidden flex flex-col items-center justify-center p-3 sm:p-4 lg:p-6 rounded-3xl altar-board w-56 sm:w-68 lg:w-96 shadow-2xl relative mx-auto">
+          
+          <!-- Problem Type Badge -->
+          <div class="flex items-center justify-between w-full mb-1.5 lg:mb-2 px-1">
+            <span id="addTypeBadge" class="px-2.5 py-0.5 lg:py-1 rounded-full bg-emerald-500/25 border border-emerald-400/60 text-[10px] lg:text-[11px] font-black text-emerald-300">
+              🌱 FRIENDLY: NO REGROUPING
+            </span>
+            <span id="addStepCounterBadge" class="px-2 py-0.5 lg:py-1 rounded-full bg-purple-900/80 border border-purple-400/60 text-[9px] lg:text-[10px] font-black text-amber-300">
+              STEP 1 OF 2
+            </span>
+          </div>
+
+          <!-- Active Step Prompt Banner -->
+          <div id="addStepPromptBanner" class="w-full text-center py-1.5 lg:py-2.5 px-2 mb-2 lg:mb-3 rounded-xl bg-slate-950/95 border-2 border-pink-400/70 text-[11px] sm:text-xs lg:text-sm font-black text-pink-300 shadow">
+            👉 STEP 1: ADD ONES (5 + 1)
+          </div>
+
+          <!-- Place Value Column Grid (Tens and Ones) -->
+          <div class="w-full grid grid-cols-2 gap-1.5 lg:gap-3 px-2">
+            
+            <!-- TENS COLUMN -->
+            <div id="tensColWrap" class="flex flex-col items-center p-1.5 transition-all duration-200">
+              <span class="text-[10px] sm:text-xs font-black tracking-wider text-cyan-300 mb-0.5">TENS</span>
+              
+              <!-- Carry / Borrow Orb -->
+              <div class="h-6 flex items-center justify-center mb-0.5">
+                <div id="addCarryBadge" class="opacity-0 w-6 h-6 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-200 text-amber-950 border border-amber-600 flex items-center justify-center text-[10px] sm:text-xs font-black shadow-lg transition-opacity duration-300">
+                  +1
+                </div>
+              </div>
+
+              <!-- Tens Digits -->
+              <div class="font-mono font-black text-2xl sm:text-3xl text-cyan-300">
+                <span id="addTens1">1</span>
+              </div>
+              <div class="font-mono font-black text-2xl sm:text-3xl text-cyan-300">
+                <span id="addTens2">1</span>
+              </div>
+            </div>
+
+            <!-- ONES COLUMN -->
+            <div id="onesColWrap" class="flex flex-col items-center p-1.5 active-place-col active-ones-col transition-all duration-200">
+              <span class="text-[10px] sm:text-xs font-black tracking-wider text-pink-300 mb-0.5">ONES</span>
+              
+              <div class="h-6 mb-0.5"></div>
+
+              <!-- Ones Digits -->
+              <div class="font-mono font-black text-2xl sm:text-3xl text-pink-300">
+                <span id="addOnes1">5</span>
+              </div>
+              <div class="font-mono font-black text-2xl sm:text-3xl text-pink-300">
+                <span id="addOnes2">1</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Math Operator Line -->
+          <div class="w-full relative flex items-center my-1.5">
+            <span id="mathOperatorSymbol" class="absolute left-2 text-amber-400 font-sans text-2xl font-black -top-3.5">+</span>
+            <div class="w-full h-1 bg-gradient-to-r from-amber-400 via-pink-400 to-cyan-400 rounded-full shadow-sm ml-7"></div>
+          </div>
+
+          <!-- Split Place-Value Result Slots -->
+          <div class="w-full grid grid-cols-2 gap-1.5 px-2 font-mono font-black text-2xl sm:text-3xl">
+            <div class="flex justify-center">
+              <span id="addResultTens" class="w-11 sm:w-13 text-center text-cyan-300 bg-slate-950/90 rounded-xl border-2 border-dashed border-cyan-400/50 py-0.5 shadow-inner">
+                ?
+              </span>
+            </div>
+            <div class="flex justify-center">
+              <span id="addResultOnes" class="w-11 sm:w-13 text-center text-pink-300 bg-slate-950/90 rounded-xl border-2 border-pink-400 py-0.5 shadow-inner animate-pulse">
+                ?
+              </span>
+            </div>
+          </div>
+
+          <!-- Step Helper Hint Tag -->
+          <div id="addRegroupHint" class="mt-2 lg:mt-4 text-[10px] lg:text-[11px] text-amber-200/90 font-bold bg-amber-500/20 px-2.5 py-0.5 lg:py-1.5 rounded-full border border-amber-400/40 text-center">
+            ⚡ Ones: 5 + 1 = 6 (No regrouping needed!)
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: Challenge Dashboard with Mana Elixir Gauge & 4 Battle Cards -->
+      <div class="flex-1 w-full flex flex-col justify-center gap-3 lg:gap-5">
+        
+        <!-- Live Encouragement Banner with Student's Name -->
+        <div class="w-full text-center py-2 lg:py-3 px-3 lg:px-4 rounded-2xl bg-gradient-to-r from-purple-950/80 via-slate-900/90 to-purple-950/80 border border-amber-400/50 text-xs sm:text-sm lg:text-lg font-bold text-amber-100 shadow flex items-center justify-center gap-1.5 lg:gap-2.5">
+          <span class="text-amber-400 animate-pulse text-base lg:text-xl">⚔️</span>
+          <span>Unleash your Champion, <span id="cheerStudentName" class="text-amber-300 font-black underline decoration-amber-400 decoration-2">Player</span>! Solve the relic to sprint!</span>
+        </div>
+
+        <!-- Mana Elixir Speed Gauge -->
+        <div class="w-full flex flex-col gap-1 lg:gap-2">
+          <div class="flex items-center justify-between text-xs lg:text-sm font-extrabold px-1">
+            <span class="flex items-center gap-1 text-amber-300 font-['Cinzel'] tracking-wider">
+              <span>⚡</span> SPEED BONUS MANA VIAL
+            </span>
+            <span id="bonusTimerText" class="text-cyan-300 font-mono text-xs lg:text-sm">8.0s</span>
+          </div>
+          <!-- Gauge track -->
+          <div class="w-full h-3.5 lg:h-5 bg-slate-950 rounded-full border-2 border-amber-400/50 p-0.5 overflow-hidden shadow-inner">
+            <div id="bonusBar" class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-amber-400 to-pink-500 transition-all duration-100" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- 4 Rush Royale Style Battle Card Buttons (2x2 Grid) -->
+        <div id="answersGrid" class="grid grid-cols-2 gap-2.5 sm:gap-3.5 lg:gap-6 w-full">
+          <!-- Card 1 -->
+          <button class="answer-btn battle-card-btn card-ruby py-4 lg:py-8 px-2 sm:px-4 flex flex-col items-center justify-center relative" data-index="0">
+            <div class="card-gloss"></div>
+            <span class="absolute top-1 lg:top-2 left-2 lg:left-3 text-[10px] lg:text-xs font-mono font-bold text-white/80 bg-black/30 px-1.5 py-0.5 rounded">[1]</span>
+            <span class="text-xl sm:text-2xl lg:text-4xl font-black tracking-wider text-white time-label">--:--</span>
+          </button>
+          
+          <!-- Card 2 -->
+          <button class="answer-btn battle-card-btn card-azure py-4 lg:py-8 px-2 sm:px-4 flex flex-col items-center justify-center relative" data-index="1">
+            <div class="card-gloss"></div>
+            <span class="absolute top-1 lg:top-2 left-2 lg:left-3 text-[10px] lg:text-xs font-mono font-bold text-white/80 bg-black/30 px-1.5 py-0.5 rounded">[2]</span>
+            <span class="text-xl sm:text-2xl lg:text-4xl font-black tracking-wider text-white time-label">--:--</span>
+          </button>
+
+          <!-- Card 3 -->
+          <button class="answer-btn battle-card-btn card-emerald py-4 lg:py-8 px-2 sm:px-4 flex flex-col items-center justify-center relative" data-index="2">
+            <div class="card-gloss"></div>
+            <span class="absolute top-1 lg:top-2 left-2 lg:left-3 text-[10px] lg:text-xs font-mono font-bold text-white/80 bg-black/30 px-1.5 py-0.5 rounded">[3]</span>
+            <span class="text-xl sm:text-2xl lg:text-4xl font-black tracking-wider text-white time-label">--:--</span>
+          </button>
+
+          <!-- Card 4 -->
+          <button class="answer-btn battle-card-btn card-gold py-4 lg:py-8 px-2 sm:px-4 flex flex-col items-center justify-center relative" data-index="3">
+            <div class="card-gloss"></div>
+            <span class="absolute top-1 lg:top-2 left-2 lg:left-3 text-[10px] lg:text-xs font-mono font-bold text-amber-950/80 bg-white/40 px-1.5 py-0.5 rounded">[4]</span>
+            <span class="text-xl sm:text-2xl lg:text-4xl font-black tracking-wider text-amber-950 time-label">--:--</span>
+          </button>
+        </div>
+
+        <p class="text-center text-[11px] sm:text-xs lg:text-sm text-purple-200/80 font-medium">
+          💡 Click or press keys <span class="bg-purple-900/60 px-1 lg:px-2 py-0.5 lg:py-1 rounded font-mono text-amber-300">1</span>, <span class="bg-purple-900/60 px-1 lg:px-2 py-0.5 lg:py-1 rounded font-mono text-amber-300">2</span>, <span class="bg-purple-900/60 px-1 lg:px-2 py-0.5 lg:py-1 rounded font-mono text-amber-300">3</span>, or <span class="bg-purple-900/60 px-1 lg:px-2 py-0.5 lg:py-1 rounded font-mono text-amber-300">4</span>.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="startOverlay" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 z-50 overflow-y-auto">
+    <div class="royale-card rounded-3xl max-w-2xl w-full p-5 sm:p-7 flex flex-col items-center text-center shadow-2xl my-auto">
+      
+      <!-- Top Title Icon -->
+      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-amber-400 via-purple-600 to-cyan-400 p-1 flex items-center justify-center shadow-2xl mb-2 border-2 border-yellow-200">
+        <span class="text-3xl sm:text-4xl anim-gem-pulse">👑</span>
+      </div>
+
+      <h2 class="text-2xl sm:text-3xl font-black tracking-wider bg-gradient-to-r from-yellow-200 via-amber-300 to-cyan-300 bg-clip-text text-transparent font-['Cinzel']">
+        MOSY MATH ADVENTURE
+      </h2>
+      <p class="text-xs sm:text-sm text-purple-200 mt-1 mb-3">
+        Enter the grand arena for a <strong class="text-amber-300 font-bold">60-Second Time Attack!</strong> Choose your Legendary Champion!
+      </p>
+
+      <!-- SECTION 1: PLAYER REGISTRATION -->
+      <div class="w-full mb-4 bg-slate-950/90 p-3.5 sm:p-4 rounded-2xl border-2 border-amber-400/70 shadow-xl text-left relative overflow-hidden">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-base sm:text-lg">🪪</span>
+            <span class="text-xs sm:text-sm uppercase font-black text-amber-300 tracking-wider font-['Cinzel']">SECTION 1: HERO IDENTIFICATION</span>
+          </div>
+          <span class="text-[10px] bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded-full font-bold border border-amber-400/40">Official Pass</span>
+        </div>
+
+        <label for="playerNameInput" class="block text-[11px] font-bold text-purple-200 mb-1">
+          Type Your Champion Name (Appears on Track & Winner's Podium):
+        </label>
+        <div class="relative w-full mb-2.5">
+          <input id="playerNameInput" type="text" maxlength="14" placeholder="Type your champion name (e.g. Alex, Maya)..." value=""
+            class="w-full px-4 py-2.5 rounded-xl bg-purple-950/90 border-2 border-amber-400 text-white font-black text-base placeholder-purple-400 focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-inner tracking-wide transition text-center sm:text-left" />
+        </div>
+
+        <!-- Quick Pick Nickname Chips -->
+        <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+          <span class="text-[10px] text-purple-300 font-bold">Quick Titles:</span>
+          <button type="button" class="quick-name-btn px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/40 text-[11px] font-bold text-amber-200 transition">⚡ Dash</button>
+          <button type="button" class="quick-name-btn px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/40 text-[11px] font-bold text-amber-200 transition">🚀 Rocket</button>
+          <button type="button" class="quick-name-btn px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/40 text-[11px] font-bold text-amber-200 transition">🌟 Nova</button>
+          <button type="button" class="quick-name-btn px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/40 text-[11px] font-bold text-amber-200 transition">🦁 Leo</button>
+          <button type="button" class="quick-name-btn px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/40 text-[11px] font-bold text-amber-200 transition">👑 Champ</button>
+        </div>
+      </div>
+
+      <!-- SECTION 2: 10 ROYALE CHAMPIONS CARDS -->
+      <div class="w-full mb-4">
+        <div class="flex items-center justify-between mb-2 px-1">
+          <div class="text-xs uppercase font-extrabold text-amber-300 tracking-wider flex items-center gap-1.5 font-['Cinzel']">
+            <span>⚔️</span> SECTION 2: SELECT CHAMPION (10 HEROES) <span>⚔️</span>
+          </div>
+          <span class="text-[10px] text-cyan-300 font-bold bg-cyan-950/70 border border-cyan-400/40 px-2 py-0.5 rounded-full">
+            Scroll for More ➔
+          </span>
+        </div>
+        
+        <!-- 10 Champion Select Cards -->
+        <div class="char-grid-scroll grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 w-full max-h-60 sm:max-h-64 overflow-y-auto p-1.5 bg-slate-950/60 rounded-2xl border border-amber-400/30">
+          
+          <!-- 1. Ignis the Pyromancer Dragon -->
+          <div class="hero-card hero-card-selected cursor-pointer p-2.5 rounded-2xl transition-all duration-150 flex flex-col items-center relative overflow-hidden" data-char="ignis">
+            <div class="selected-indicator absolute top-1 right-1 text-xs text-amber-300 font-black">✓</div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-rose-500/20 flex items-center justify-center text-2xl sm:text-3xl mb-1 shadow-inner border border-rose-500/40">
+              🐲
+            </div>
+            <span class="font-black text-xs sm:text-sm text-rose-300 leading-tight">Ignis</span>
+            <span class="text-[9px] text-purple-300 font-semibold">Fire Dragon</span>
+            <span class="badge-legendary text-[8px] mt-1 px-1.5 py-0.5 rounded-full font-black uppercase">Legendary</span>
+          </div>
+
+          <!-- 2. Aurelia the Valkyrie Gryphon -->
+          <div class="hero-card cursor-pointer p-2.5 rounded-2xl transition-all duration-150 flex flex-col items-center relative overflow-hidden" data-char="aurelia">
+            <div class="selected-indicator hidden absolute top-1 right-1 text-xs text-amber-300 font-black">✓</div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-amber-500/20 flex items-center justify-center text-2xl sm:text-3xl mb-1 shadow-inner border border-amber-500/40">
+              🦅
+            </div>
+            <span class="font-black text-xs sm:text-sm text-amber-300 leading-tight">Aurelia</span>
+            <span class="text-[9px] text-purple-300 font-semibold">Solar Gryphon</span>
+            <span class="badge-mythic text-[8px] mt-1 px-1.5 py-0.5 rounded-full font-black uppercase">Mythic</span>
+          </div>
+
+          <!-- 3. Kaelen the Storm Tiger -->
+          <div class="hero-card cursor-pointer p-2.5 rounded-2xl transition-all duration-150 flex flex-col items-center relative overflow-hidden" data-char="kaelen">
+            <div class="selected-indicator hidden absolute top-1 right-1 text-xs text-amber-300 font-black">✓</div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-cyan-500/20 flex items-center justify-center text-2xl sm:text-3xl mb-1 shadow-inner border border-cyan-500/40">
+              🐅
+            </div>
+            <span class="font-black text-xs sm:text-sm text-cyan-300 leading-tight">Kaelen</span>
+            <span class="text-[9px] text-purple-300 font-semibold">Storm Tiger</span>
+            <span class="badge-legendary text-[8px] mt-1 px-1.5 py-0.5 rounded-full font-black uppercase">Legendary</span>
+          </div>
+
+          <!-- 4. Torgar the Mecha-Titan -->
+          <div class="hero-card cursor-pointer p-2.5 rounded-2xl transition-all duration-150 flex flex-col items-center relative overflow-hidden" data-char="torgar">
+            <div class="selected-indicator hidden absolute top-1 right-1 text-xs text-amber-300 font-black">✓</div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/20 flex items-center justify-center text-2xl sm:text-3xl mb-1 shadow-inner border border-emerald-500/40">
+              🐢
+            </div>
+            <span class="font-black text-xs sm:text-sm text-emerald-300 leading-tight">Torgar</span>
+            <span class="text-[9px] text-purple-300 font-semibold">Mecha Turtle</span>
+            <span class="badge-epic text-[8px] mt-1 px-1.5 py-0.5 rounded-full font-black uppercase">Epic</span>
+          </div>
+
+          <!-- 5. Lyra the Astral Fox -->
+          <div class="hero-card cursor-pointer p-2.5 rounded-2xl transition-all duration-150 flex flex-col items-center relative overflow-hidden" data-char="lyra">
+            <div class="selected-indicator hidden absolute top-1 right-1 text-xs text-amber-300 font-black">✓</div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-purple-500/20 flex items-center justify-center text-2xl sm:text-3xl mb-1 shadow-inner border border-purple-500/40">
+              🦊
+            </div>
+            <span class="font-black text-xs sm:text-sm text-purple-300 leading-tight">Lyra</span>
+            <span class="text-[9px] text-purple-300 font-semibold">Astral Kitsune</span>
+            <span class="badge-mythic text-[8px] mt-1 px-1.5 py-0.5 rounded-full font-black uppercase">Mythic</span>
+          </div>
+
+          <!-- 6. Boreas the Frost Wolf -->
+          <div class="hero-card cursor-pointer p-2.5 rounded-2xl transition-all duration-150 flex flex-col items-center relative overflow-hidden" data-char="boreas">
+            <div class="selected-indicator hidden absolute top-1 right-1 text-xs text-amber-300 font-black">✓</div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-sky-500/20 flex items-center justify-center text-2xl sm:text-3xl mb-1 shadow-inner border border-sky-500/40">
+              🐺
+            </div>
+            <span class="font-black text-xs sm:text-sm text-sky-300 leading-tight">Boreas</span>
+            <span class="text-[9px] text-purple-300 font-semibold">Frost Paladin</span>
+            <span class="badge-legendary text-[8px] mt-1 px-1.5 py-0.5 rounded-full font-black uppercase">Legendary</span>
+          </div>
+
+          <!-- 7. Zephyr the Windrunner -->
+          <div class="hero-card cursor-pointer p-2.5 rounded-2xl transition-all duration-150 flex flex-col items-center relative overflow-hidden" data-char="zephyr">
+            <div class="selected-indicator hidden absolute top-1 right-1 text-xs text-amber-300 font-black">✓</div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-pink-500/20 flex items-center justify-center text-2xl sm:text-3xl mb-1 shadow-inner border border-pink-500/40">
+              🦤
+            </div>
+            <span class="font-black text-xs sm:text-sm text-pink-300 leading-tight">Zephyr</span>
+            <span class="text-[9px] text-purple-300 font-semibold">Speed Ostrich</span>
+            <span class="badge-epic text-[8px] mt-1 px-1.5 py-0.5 rounded-full font-black uppercase">Epic</span>
+          </div>
+
+          <!-- 8. Nyx the Shadow Panther -->
+          <div class="hero-card cursor-pointer p-2.5 rounded-2xl transition-all duration-150 flex flex-col items-center relative overflow-hidden" data-char="nyx">
+            <div class="selected-indicator hidden absolute top-1 right-1 text-xs text-amber-300 font-black">✓</div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-violet-500/20 flex items-center justify-center text-2xl sm:text-3xl mb-1 shadow-inner border border-violet-500/40">
+              🐆
+            </div>
+            <span class="font-black text-xs sm:text-sm text-violet-300 leading-tight">Nyx</span>
+            <span class="text-[9px] text-purple-300 font-semibold">Shadow Assassin</span>
+            <span class="badge-mythic text-[8px] mt-1 px-1.5 py-0.5 rounded-full font-black uppercase">Mythic</span>
+          </div>
+
+          <!-- 9. Sir Barnaby the Royal Knight -->
+          <div class="hero-card cursor-pointer p-2.5 rounded-2xl transition-all duration-150 flex flex-col items-center relative overflow-hidden" data-char="barnaby">
+            <div class="selected-indicator hidden absolute top-1 right-1 text-xs text-amber-300 font-black">✓</div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-yellow-500/20 flex items-center justify-center text-2xl sm:text-3xl mb-1 shadow-inner border border-yellow-500/40">
+              🐶
+            </div>
+            <span class="font-black text-xs sm:text-sm text-yellow-300 leading-tight">Barnaby</span>
+            <span class="text-[9px] text-purple-300 font-semibold">Royal Paladin</span>
+            <span class="badge-epic text-[8px] mt-1 px-1.5 py-0.5 rounded-full font-black uppercase">Epic</span>
+          </div>
+
+          <!-- 10. Hydra Bubbles the Shaman -->
+          <div class="hero-card cursor-pointer p-2.5 rounded-2xl transition-all duration-150 flex flex-col items-center relative overflow-hidden" data-char="bubbles">
+            <div class="selected-indicator hidden absolute top-1 right-1 text-xs text-amber-300 font-black">✓</div>
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-teal-500/20 flex items-center justify-center text-2xl sm:text-3xl mb-1 shadow-inner border border-teal-500/40">
+              🫧
+            </div>
+            <span class="font-black text-xs sm:text-sm text-teal-300 leading-tight">Bubbles</span>
+            <span class="text-[9px] text-purple-300 font-semibold">Ocean Shaman</span>
+            <span class="badge-legendary text-[8px] mt-1 px-1.5 py-0.5 rounded-full font-black uppercase">Legendary</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SECTION 3: MATH SUBJECT SELECTION -->
+      <div class="w-full mb-4">
+        <div class="text-xs uppercase font-extrabold text-amber-300 tracking-wider mb-2 flex items-center justify-center gap-1.5 font-['Cinzel']">
+          <span>📚</span> SECTION 3: SELECT BATTLE DISCIPLINE <span>📚</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 w-full">
+          <!-- Clock Reading Topic Card -->
+          <div id="topicCardClock" class="topic-card topic-active cursor-pointer p-2.5 sm:p-3 rounded-2xl border-2 border-amber-400 bg-slate-900/80 transition flex items-center gap-2.5 shadow-lg">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-xl sm:text-2xl">⏱️</div>
+            <div class="text-left">
+              <div class="text-xs sm:text-sm font-black text-amber-300">Clock Reading</div>
+              <div class="text-[10px] text-purple-200">Analog to Digital</div>
+            </div>
+          </div>
+
+          <!-- 2-Digit Addition Topic Card -->
+          <div id="topicCardAddition" class="topic-card cursor-pointer p-2.5 sm:p-3 rounded-2xl border-2 border-cyan-400/40 bg-slate-900/80 hover:bg-slate-800 transition flex items-center gap-2.5 shadow-lg">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-xl sm:text-2xl">➕</div>
+            <div class="text-left">
+              <div class="text-xs sm:text-sm font-black text-cyan-300">2-Digit Addition</div>
+              <div class="text-[10px] text-purple-200">With Regrouping!</div>
+            </div>
+          </div>
+
+          <!-- 2-Digit Subtraction Topic Card -->
+          <div id="topicCardSubtraction" class="topic-card cursor-pointer p-2.5 sm:p-3 rounded-2xl border-2 border-pink-400/40 bg-slate-900/80 hover:bg-slate-800 transition flex items-center gap-2.5 shadow-lg">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-pink-500/20 flex items-center justify-center text-xl sm:text-2xl">➖</div>
+            <div class="text-left">
+              <div class="text-xs sm:text-sm font-black text-pink-300">2-Digit Subtraction</div>
+              <div class="text-[10px] text-purple-200">With Borrowing!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: SKILL DIVISION SELECTION -->
+      <div class="w-full mb-5">
+        <div id="divisionSectionLabel" class="text-[11px] uppercase font-extrabold text-amber-300 tracking-wider mb-1.5 font-['Cinzel']">
+          SECTION 4: CLOCK SKILL DIVISION
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <button id="diffBtn1" class="diff-select-btn p-2 rounded-xl border-2 border-transparent font-bold text-xs bg-slate-900 hover:bg-slate-800 text-purple-200" data-diff="rookie">
+            🐣 Rookie<br><span id="diffDesc1" class="text-[9px] font-normal opacity-80">:00, :30</span>
+          </button>
+          <button id="diffBtn2" class="diff-select-btn p-2 rounded-xl border-2 border-amber-400 font-bold text-xs bg-amber-500/20 text-amber-200 shadow-md" data-diff="adventurer">
+            🌟 Adventurer<br><span id="diffDesc2" class="text-[9px] font-normal opacity-80">:15, :45</span>
+          </button>
+          <button id="diffBtn3" class="diff-select-btn p-2 rounded-xl border-2 border-transparent font-bold text-xs bg-slate-900 hover:bg-slate-800 text-purple-200" data-diff="master">
+            ⚡ Master<br><span id="diffDesc3" class="text-[9px] font-normal opacity-80">5-minute</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Start Race Button -->
+      <button id="startRaceBtn" class="btn-gold-action w-full py-4 rounded-2xl text-lg sm:text-2xl font-black shadow-2xl flex items-center justify-center gap-2">
+        <span>ENTER THE ARENA!</span>
+        <span class="text-2xl">🏁</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="resultsOverlay" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-50">
+    <div class="royale-card rounded-3xl max-w-[1600px] w-full max-h-[95vh] h-full p-4 sm:p-6 lg:p-8 flex flex-col shadow-2xl border-4 border-amber-400/80 relative overflow-hidden my-auto">
+      
+      <!-- Interactive Fireworks Canvas Layer -->
+      <canvas id="fireworksCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-10"></canvas>
+
+      <!-- Split Layout Wrapper for Desktop -->
+      <div class="w-full flex flex-col lg:flex-row gap-6 lg:gap-10 z-20 flex-1 overflow-y-auto lg:overflow-hidden pb-4 lg:pb-0">
+        
+        <!-- LEFT COLUMN: Winner Showcase & Podium -->
+        <div class="flex-1 flex flex-col items-center justify-center lg:overflow-y-auto char-grid-scroll pr-1">
+          <!-- Grand Winner Spotlight Showcase -->
+          <div id="winnerShowcaseBox" class="w-full rounded-3xl p-5 lg:p-8 mb-4 lg:mb-8 flex flex-col items-center justify-center overflow-hidden border-2 border-amber-400 bg-gradient-to-b from-amber-500/20 to-purple-950/80 shadow-2xl">
+            
+            <div class="flex items-center justify-center gap-3 mb-2">
+              <span class="text-3xl sm:text-4xl lg:text-5xl">✨</span>
+              <span id="podiumHeaderEmoji" class="text-5xl sm:text-6xl lg:text-7xl animate-bounce drop-shadow-2xl">👑</span>
+              <span class="text-3xl sm:text-4xl lg:text-5xl">✨</span>
+            </div>
+
+            <div id="podiumRankTag" class="text-xs sm:text-sm lg:text-base font-black uppercase tracking-widest text-amber-300 mb-2 px-5 py-1.5 rounded-full bg-amber-500/25 border border-amber-400/80 font-['Cinzel'] shadow-lg">
+              🏆 GRAND ARENA CHAMPION 🏆
+            </div>
+
+            <!-- BIG PLAYER WINNER NAME -->
+            <div class="relative w-full my-2 flex items-center justify-center gap-3 sm:gap-5">
+              <span class="text-4xl sm:text-5xl lg:text-6xl animate-pulse">🎆</span>
+              <h1 id="winnerPlayerBigName" class="winner-name-anim text-4xl sm:text-6xl lg:text-[5rem] font-black tracking-wider text-amber-300 uppercase leading-none break-all font-['Cinzel']">
+                CHAMPION
+              </h1>
+              <span class="text-4xl sm:text-5xl lg:text-6xl animate-pulse">🎆</span>
+            </div>
+
+            <p id="podiumSubtitle" class="text-sm sm:text-base lg:text-lg text-purple-100 font-bold mt-3 max-w-xl text-center leading-snug">
+              You dashed across the arena in 1 minute to claim the Grand Trophy!
+            </p>
+          </div>
+
+          <!-- 3D Olympic Podium Display (Top 3) -->
+          <div class="relative w-full max-w-3xl mx-auto flex items-end justify-center gap-3 lg:gap-6 h-56 lg:h-72 mb-4 px-2">
+            <!-- 2nd Place (Silver) -->
+            <div class="flex-1 flex flex-col items-center">
+              <span id="podiumRacer2" class="text-3xl sm:text-4xl lg:text-5xl mb-2 drop-shadow-lg">🦅</span>
+              <span id="podiumName2" class="text-xs lg:text-sm font-bold text-purple-200 truncate w-full text-center px-1">Aurelia</span>
+              <span id="podiumDist2" class="text-xs lg:text-sm text-cyan-300 font-mono mb-2 font-black">0m</span>
+              <div class="w-full h-28 lg:h-40 bg-gradient-to-t from-slate-700 via-slate-600 to-slate-400 rounded-t-2xl flex flex-col items-center justify-center text-slate-100 font-black text-2xl lg:text-4xl border-t-4 border-slate-300 shadow-xl relative overflow-hidden">
+                <div class="card-gloss"></div>
+                <span>2</span>
+                <span class="text-[10px] lg:text-xs text-slate-200 font-bold uppercase tracking-widest mt-1">SILVER</span>
+              </div>
+            </div>
+
+            <!-- 1st Place (Gold Champion) -->
+            <div class="flex-1 flex flex-col items-center z-10">
+              <span class="text-xl lg:text-3xl text-amber-300 animate-bounce mb-1 drop-shadow-lg">👑</span>
+              <span id="podiumRacer1" class="text-5xl sm:text-6xl lg:text-7xl mb-2 drop-shadow-xl">🐲</span>
+              <span id="podiumName1" class="text-sm lg:text-base font-black text-amber-300 truncate w-full text-center px-1">PLAYER</span>
+              <span id="podiumDist1" class="text-sm lg:text-lg text-amber-200 font-mono font-black mb-2">0m</span>
+              <div class="w-full h-36 lg:h-52 bg-gradient-to-t from-amber-600 via-amber-500 to-yellow-300 rounded-t-2xl flex flex-col items-center justify-center text-amber-950 font-black text-4xl lg:text-6xl border-t-4 border-yellow-200 shadow-[0_-10px_40px_rgba(255,213,79,0.4)] relative overflow-hidden">
+                <div class="card-gloss"></div>
+                <span>1</span>
+                <span class="text-xs lg:text-sm text-amber-900 font-extrabold uppercase tracking-widest mt-1">GOLD</span>
+              </div>
+            </div>
+
+            <!-- 3rd Place (Bronze) -->
+            <div class="flex-1 flex flex-col items-center">
+              <span id="podiumRacer3" class="text-3xl sm:text-4xl lg:text-5xl mb-2 drop-shadow-lg">🐅</span>
+              <span id="podiumName3" class="text-xs lg:text-sm font-bold text-purple-200 truncate w-full text-center px-1">Kaelen</span>
+              <span id="podiumDist3" class="text-xs lg:text-sm text-amber-400 font-mono font-black mb-2">0m</span>
+              <div class="w-full h-20 lg:h-28 bg-gradient-to-t from-amber-900 via-amber-800 to-amber-700 rounded-t-2xl flex flex-col items-center justify-center text-amber-200 font-black text-2xl lg:text-3xl border-t-4 border-amber-500 shadow-xl relative overflow-hidden">
+                <div class="card-gloss"></div>
+                <span>3</span>
+                <span class="text-[10px] lg:text-xs text-amber-300 font-bold uppercase tracking-widest mt-1">BRONZE</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4th Place Ribbon Row -->
+          <div class="w-full max-w-3xl mx-auto bg-slate-950/80 border-2 border-amber-400/30 rounded-2xl px-5 py-3 flex items-center justify-between shadow-lg">
+            <div class="flex items-center gap-3">
+              <span class="text-sm lg:text-base font-black text-purple-400 uppercase tracking-wider">4th Place:</span>
+              <span id="podiumRacer4" class="text-2xl lg:text-3xl">🐢</span>
+              <span id="podiumName4" class="text-base lg:text-lg font-bold text-purple-200">Torgar</span>
+            </div>
+            <span id="podiumDist4" class="text-lg lg:text-xl text-purple-300 font-mono font-black">0m</span>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Stats & Career History -->
+        <div class="flex-1 flex flex-col gap-4 lg:gap-6 lg:border-l-4 lg:border-amber-400/20 lg:pl-8 h-full min-h-0">
+          
+          <!-- Performance Stats (Bigger Grid) -->
+          <div class="grid grid-cols-2 gap-3 lg:gap-5 w-full bg-slate-950/80 p-5 lg:p-8 rounded-3xl border-2 border-amber-400/30 text-center shadow-xl shrink-0">
+            <div class="flex flex-col items-center justify-center bg-white/5 rounded-2xl p-3 border border-white/10">
+              <span class="text-[11px] lg:text-sm text-cyan-300 block font-black uppercase tracking-widest mb-1">YOUR DISTANCE</span>
+              <span id="statDistance" class="text-2xl sm:text-3xl lg:text-5xl font-black text-cyan-300 font-mono drop-shadow-[0_0_8px_rgba(0,245,212,0.5)]">0m</span>
+            </div>
+            <div class="flex flex-col items-center justify-center bg-white/5 rounded-2xl p-3 border border-white/10">
+              <span class="text-[11px] lg:text-sm text-emerald-400 block font-black uppercase tracking-widest mb-1">ACCURACY</span>
+              <span id="statAccuracy" class="text-2xl sm:text-3xl lg:text-5xl font-black text-emerald-400 font-mono drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">100%</span>
+            </div>
+            <div class="flex flex-col items-center justify-center bg-white/5 rounded-2xl p-3 border border-white/10">
+              <span class="text-[11px] lg:text-sm text-amber-300 block font-black uppercase tracking-widest mb-1">SOLVED</span>
+              <span id="statSolved" class="text-2xl sm:text-3xl lg:text-5xl font-black text-amber-300 font-mono drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]">16</span>
+            </div>
+            <div class="flex flex-col items-center justify-center bg-white/5 rounded-2xl p-3 border border-white/10">
+              <span class="text-[11px] lg:text-sm text-pink-400 block font-black uppercase tracking-widest mb-1">BEST STREAK</span>
+              <span id="statStreak" class="text-2xl sm:text-3xl lg:text-5xl font-black text-pink-400 font-mono drop-shadow-[0_0_8px_rgba(244,114,182,0.5)]">8 🔥</span>
+            </div>
+          </div>
+
+          <!-- Player History Section (Much Larger) -->
+          <div class="w-full flex flex-col flex-1 min-h-[280px] bg-slate-950/80 p-4 lg:p-6 rounded-3xl border-2 border-amber-400/30 text-left shadow-xl overflow-hidden">
+            <div class="flex items-center justify-between mb-4 shrink-0 border-b-2 border-amber-400/20 pb-3">
+                <h3 class="text-sm lg:text-xl font-black text-amber-300 uppercase tracking-widest font-['Cinzel'] drop-shadow-md">📜 CAREER HISTORY</h3>
+                <span class="text-xs lg:text-sm text-purple-300 bg-purple-900/50 px-3 py-1 rounded-full border border-purple-500/50 font-bold shadow-inner">Top Recent Records</span>
+            </div>
+            <div id="playerHistoryList" class="overflow-y-auto pr-3 flex flex-col gap-3 char-grid-scroll flex-1">
+                <!-- Records injected here dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Post-Race Action Buttons (Pinned to bottom) -->
+      <div class="relative z-20 flex flex-col sm:flex-row gap-4 w-full mt-6 pt-4 border-t-2 border-amber-400/20 shrink-0">
+        <button id="rematchBtn" class="btn-gold-action flex-1 py-4 lg:py-6 rounded-2xl text-lg lg:text-2xl font-black shadow-xl hover:scale-[1.02] transition-transform">
+          <span>BATTLE AGAIN 🔁</span>
+        </button>
+        <button id="changeLevelBtn" class="battle-card-btn card-azure flex-1 py-4 lg:py-6 rounded-2xl text-lg lg:text-2xl font-black shadow-xl text-white hover:scale-[1.02]">
+          <span>CHANGE HERO 👑</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- QUICK EDIT NAME MODAL -->
+  <div id="editNameModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 z-50">
+    <div class="royale-card rounded-2xl max-w-sm w-full p-5 flex flex-col text-center border-2 border-amber-400 shadow-2xl">
+      <div class="text-3xl mb-1">🏷️</div>
+      <h3 class="text-lg font-black text-amber-300 mb-1 font-['Cinzel']">EDIT CHAMPION NAME</h3>
+      <p class="text-xs text-purple-200 mb-3">Update your hero identity anytime!</p>
+      <input id="quickNameInput" type="text" maxlength="14" placeholder="Enter name..." class="w-full text-center px-4 py-2 rounded-xl bg-purple-950/90 border-2 border-amber-400 text-white font-black text-base focus:outline-none mb-3" />
+      <div class="flex gap-2">
+        <button id="cancelNameEditBtn" class="bg-purple-900 hover:bg-purple-800 text-purple-200 flex-1 py-2 rounded-xl text-xs font-bold transition">CANCEL</button>
+        <button id="saveNameEditBtn" class="btn-gold-action flex-1 py-2 rounded-xl text-xs font-black">SAVE NAME</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // Polyfill roundRect for school Chromebooks, older tablets, and older browser builds
+  if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+      if (typeof r === 'undefined') r = 0;
+      let radius = { tl: 0, tr: 0, br: 0, bl: 0 };
+      if (typeof r === 'number') {
+        radius = { tl: r, tr: r, br: r, bl: r };
+      } else if (r) {
+        radius = Object.assign(radius, r);
+      }
+      this.beginPath();
+      this.moveTo(x + radius.tl, y);
+      this.lineTo(x + w - radius.tr, y);
+      this.quadraticCurveTo(x + w, y, x + w, y + radius.tr);
+      this.lineTo(x + w, y + h - radius.br);
+      this.quadraticCurveTo(x + w, y + h, x + w - radius.br, y + h);
+      this.lineTo(x + radius.bl, y + h);
+      this.quadraticCurveTo(x, y + h, x, y + h - radius.bl);
+      this.lineTo(x, y + radius.tl);
+      this.quadraticCurveTo(x, y, x + radius.tl, y);
+      this.closePath();
+      return this;
+    };
+  }
+
+  class SoundEngine {
+    constructor() {
+      this.ctx = null;
+      this.muted = false;
+    }
+
+    init() {
+      try {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+      } catch (e) {
+        console.warn("Audio Context init suppressed:", e);
+      }
+    }
+
+    toggleMute() {
+      this.muted = !this.muted;
+      return this.muted;
+    }
+
+    playSelect() {
+      if (this.muted) return;
+      try {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(1040, now + 0.08);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.13);
+      } catch (e) {}
+    }
+
+    playCorrect() {
+      if (this.muted) return;
+      try {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const freqs = [523.25, 659.25, 783.99, 987.77, 1046.50];
+        freqs.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.035);
+          gain.gain.setValueAtTime(0.001, now + idx * 0.035);
+          gain.gain.linearRampToValueAtTime(0.12, now + idx * 0.035 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.035 + 0.32);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.035);
+          osc.stop(now + idx * 0.035 + 0.35);
+        });
+      } catch (e) {}
+    }
+
+    playSuperBoost() {
+      if (this.muted) return;
+      try {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(261.63, now);
+        osc.frequency.exponentialRampToValueAtTime(523.25, now + 0.25);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(600, now);
+        filter.frequency.exponentialRampToValueAtTime(3600, now + 0.2);
+        filter.Q.setValueAtTime(3.2, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.18, now + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.37);
+
+        const sub = this.ctx.createOscillator();
+        const subGain = this.ctx.createGain();
+        sub.type = 'sine';
+        sub.frequency.setValueAtTime(130, now);
+        sub.frequency.exponentialRampToValueAtTime(50, now + 0.28);
+        subGain.gain.setValueAtTime(0.25, now);
+        subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        sub.connect(subGain);
+        subGain.connect(this.ctx.destination);
+        sub.start(now);
+        sub.stop(now + 0.32);
+      } catch (e) {}
+    }
+
+    playWrong() {
+      if (this.muted) return;
+      try {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const gain = this.ctx.createGain();
+        
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.exponentialRampToValueAtTime(130, now + 0.25);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(500, now);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.27);
+      } catch (e) {}
+    }
+
+    playWarningTick() {
+      if (this.muted) return;
+      try {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(920, now);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.14);
+      } catch (e) {}
+    }
+
+    playWhistle() {
+      if (this.muted) return;
+      try {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [1760, 1860, 1760].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + i * 0.14);
+          gain.gain.setValueAtTime(0.16, now + i * 0.14);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.14 + 0.18);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.14);
+          osc.stop(now + i * 0.14 + 0.2);
+        });
+      } catch (e) {}
+    }
+
+    playVictory(isGrandChampion = true) {
+      if (this.muted) return;
+      try {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const masterBus = this.ctx.createGain();
+        masterBus.gain.setValueAtTime(0.75, now);
+        masterBus.connect(this.ctx.destination);
+
+        const triggerChord = (notes, startTime, duration, velocity = 0.08) => {
+          notes.forEach((freq) => {
+            const osc1 = this.ctx.createOscillator();
+            osc1.type = 'sawtooth';
+            osc1.frequency.setValueAtTime(freq, startTime);
+            osc1.detune.setValueAtTime(-6, startTime);
+
+            const osc2 = this.ctx.createOscillator();
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(freq, startTime);
+            osc2.detune.setValueAtTime(6, startTime);
+
+            const filter = this.ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.Q.setValueAtTime(2.2, startTime);
+            filter.frequency.setValueAtTime(600, startTime);
+            filter.frequency.exponentialRampToValueAtTime(3200, startTime + 0.15);
+            filter.frequency.exponentialRampToValueAtTime(1200, startTime + duration);
+
+            const gain = this.ctx.createGain();
+            gain.gain.setValueAtTime(0.0001, startTime);
+            gain.gain.linearRampToValueAtTime(velocity, startTime + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+            osc1.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gain);
+            gain.connect(masterBus);
+
+            osc1.start(startTime);
+            osc2.start(startTime);
+            osc1.stop(startTime + duration + 0.05);
+            osc2.stop(startTime + duration + 0.05);
+          });
+        };
+
+        const triggerSubDrop = (startTime, duration = 0.45) => {
+          const subOsc = this.ctx.createOscillator();
+          const subGain = this.ctx.createGain();
+          subOsc.type = 'sine';
+          subOsc.frequency.setValueAtTime(140, startTime);
+          subOsc.frequency.exponentialRampToValueAtTime(42, startTime + duration * 0.7);
+
+          subGain.gain.setValueAtTime(0.001, startTime);
+          subGain.gain.linearRampToValueAtTime(0.38, startTime + 0.02);
+          subGain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+          subOsc.connect(subGain);
+          subGain.connect(masterBus);
+          subOsc.start(startTime);
+          subOsc.stop(startTime + duration + 0.02);
+        };
+
+        const triggerCrystalBells = (bellFreqs, startTime) => {
+          bellFreqs.forEach((freq, i) => {
+            const bellTime = startTime + i * 0.06;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, bellTime);
+
+            gain.gain.setValueAtTime(0.001, bellTime);
+            gain.gain.linearRampToValueAtTime(0.12, bellTime + 0.015);
+            gain.gain.exponentialRampToValueAtTime(0.0001, bellTime + 0.45);
+
+            osc.connect(gain);
+            gain.connect(masterBus);
+            osc.start(bellTime);
+            osc.stop(bellTime + 0.48);
+          });
+        };
+
+        if (isGrandChampion) {
+          triggerChord([174.61, 261.63, 329.63, 392.00, 440.00], now + 0.0, 0.38, 0.07);
+          triggerSubDrop(now + 0.0, 0.35);
+
+          triggerChord([196.00, 293.66, 392.00, 493.88, 587.33], now + 0.38, 0.36, 0.08);
+          triggerChord([220.00, 329.63, 392.00, 523.25, 659.25], now + 0.74, 0.36, 0.08);
+          triggerSubDrop(now + 0.74, 0.35);
+
+          const grandDropTime = now + 1.15;
+          triggerChord([130.81, 196.00, 261.63, 329.63, 392.00, 493.88, 587.33, 783.99], grandDropTime, 2.6, 0.10);
+          triggerSubDrop(grandDropTime, 0.85);
+          triggerCrystalBells([1046.50, 1318.51, 1567.98, 1975.53, 2093.00, 1567.98, 2093.00], grandDropTime + 0.1);
+        } else {
+          triggerChord([174.61, 261.63, 329.63, 392.00], now + 0.0, 0.45, 0.07);
+          triggerSubDrop(now + 0.0, 0.35);
+          triggerChord([196.00, 293.66, 392.00, 493.88], now + 0.48, 0.45, 0.08);
+          const resTime = now + 0.95;
+          triggerChord([130.81, 196.00, 261.63, 329.63, 392.00, 523.25], resTime, 1.8, 0.09);
+          triggerSubDrop(resTime, 0.6);
+          triggerCrystalBells([1046.5, 1318.5, 1567.98, 2093.0], resTime + 0.1);
+        }
+      } catch (e) {}
+    }
+
+    playFireworkBoom(isDeep = false) {
+      if (this.muted) return;
+      try {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const whistleOsc = this.ctx.createOscillator();
+        const whistleGain = this.ctx.createGain();
+        whistleOsc.type = 'sine';
+        whistleOsc.frequency.setValueAtTime(450 + Math.random() * 150, now);
+        whistleOsc.frequency.exponentialRampToValueAtTime(1200 + Math.random() * 300, now + 0.18);
+
+        whistleGain.gain.setValueAtTime(0.001, now);
+        whistleGain.gain.linearRampToValueAtTime(0.10, now + 0.04);
+        whistleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+        whistleOsc.connect(whistleGain);
+        whistleGain.connect(this.ctx.destination);
+        whistleOsc.start(now);
+        whistleOsc.stop(now + 0.22);
+
+        const boomOsc = this.ctx.createOscillator();
+        const boomGain = this.ctx.createGain();
+        boomOsc.type = 'sine';
+        const baseFreq = isDeep ? 80 : 110;
+        boomOsc.frequency.setValueAtTime(baseFreq + Math.random() * 20, now + 0.18);
+        boomOsc.frequency.exponentialRampToValueAtTime(32, now + 0.65);
+
+        boomGain.gain.setValueAtTime(0.001, now + 0.18);
+        boomGain.gain.linearRampToValueAtTime(0.32, now + 0.21);
+        boomGain.gain.exponentialRampToValueAtTime(0.001, now + 0.68);
+
+        boomOsc.connect(boomGain);
+        boomGain.connect(this.ctx.destination);
+        boomOsc.start(now + 0.18);
+        boomOsc.stop(now + 0.7);
+      } catch (e) {}
+    }
+  }
+
+  const sound = new SoundEngine();
+
+  function setupClockFaceSvg() {
+    const ticksGroup = document.getElementById('clockTicks');
+    const numsGroup = document.getElementById('clockNumbers');
+    if (!ticksGroup || !numsGroup) return;
+    ticksGroup.innerHTML = '';
+    numsGroup.innerHTML = '';
+
+    for (let i = 0; i < 60; i++) {
+      const angle = (i * 6) * (Math.PI / 180);
+      const isHour = i % 5 === 0;
+      const rInner = isHour ? 68 : 75;
+      const rOuter = 80;
+
+      const x1 = 100 + rInner * Math.sin(angle);
+      const y1 = 100 - rInner * Math.cos(angle);
+      const x2 = 100 + rOuter * Math.sin(angle);
+      const y2 = 100 - rOuter * Math.cos(angle);
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', x1);
+      line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2);
+      line.setAttribute('y2', y2);
+      line.setAttribute('stroke', isHour ? '#FFD54F' : 'rgba(255, 213, 79, 0.45)');
+      line.setAttribute('stroke-width', isHour ? '2.5' : '1.2');
+      ticksGroup.appendChild(line);
+    }
+
+    for (let h = 1; h <= 12; h++) {
+      const angle = (h * 30) * (Math.PI / 180);
+      const rNum = 57;
+      const x = 100 + rNum * Math.sin(angle);
+      const y = 100 - rNum * Math.cos(angle) + 1;
+
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', x);
+      text.setAttribute('y', y);
+      text.textContent = h;
+      numsGroup.appendChild(text);
+    }
+  }
+  setupClockFaceSvg();
+
+  class QuestionEngine {
+    constructor() {
+      this.topic = 'clock';
+      this.difficulty = 'adventurer';
+      this.questionCount = 0;
+    }
+
+    setTopic(topic) { this.topic = topic; }
+    setDifficulty(diff) { this.difficulty = diff; }
+
+    generateQuestion() {
+      this.questionCount++;
+      if (this.topic === 'addition') return this.generateAdditionQuestion();
+      if (this.topic === 'subtraction') return this.generateSubtractionQuestion();
+      return this.generateClockQuestion();
+    }
+
+    generateClockQuestion() {
+      let minutePool = [0, 30];
+      if (this.difficulty === 'adventurer') minutePool = [0, 15, 30, 45];
+      else if (this.difficulty === 'master') {
+        minutePool = [];
+        for (let m = 0; m < 60; m += 5) minutePool.push(m);
+      }
+
+      const hour = 1 + Math.floor(Math.random() * 12);
+      const minute = minutePool[Math.floor(Math.random() * minutePool.length)];
+
+      const formatTime = (h, m) => {
+        const hh = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+        const mm = m < 10 ? '0' + m : '' + m;
+        return `${hh < 10 ? '0' : ''}${hh}:${mm}`;
+      };
+
+      const correctTime = formatTime(hour, minute);
+      const choicesSet = new Set([correctTime]);
+
+      const hourPlus = hour === 12 ? 1 : hour + 1;
+      const hourMinus = hour === 1 ? 12 : hour - 1;
+      choicesSet.add(formatTime(hourPlus, minute));
+      choicesSet.add(formatTime(hourMinus, minute));
+
+      const otherMinutes = minutePool.filter(m => m !== minute);
+      if (otherMinutes.length > 0) {
+        choicesSet.add(formatTime(hour, otherMinutes[Math.floor(Math.random() * otherMinutes.length)]));
+      }
+
+      // Safe bounded generator: Guaranteed never to loop infinitely
+      let safetyCount = 0;
+      while (choicesSet.size < 4 && safetyCount < 30) {
+        safetyCount++;
+        const randH = 1 + Math.floor(Math.random() * 12);
+        const randM = minutePool[Math.floor(Math.random() * minutePool.length)];
+        choicesSet.add(formatTime(randH, randM));
+      }
+      let fallbackH = 1;
+      while (choicesSet.size < 4) {
+        choicesSet.add(formatTime(((hour + fallbackH) % 12) || 12, 0));
+        fallbackH++;
+      }
+
+      const choices = Array.from(choicesSet).slice(0, 4);
+      for (let i = choices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [choices[i], choices[j]] = [choices[j], choices[i]];
+      }
+
+      return {
+        type: 'clock',
+        hour,
+        minute,
+        correctTime,
+        choices,
+        correctIndex: choices.indexOf(correctTime)
+      };
+    }
+
+    generateAdditionQuestion() {
+      const forceRegroup = Math.random() < 0.28;
+      let tens1, ones1, tens2, ones2;
+
+      let maxTensSum = 8;
+      if (this.difficulty === 'rookie') maxTensSum = 4;
+      else if (this.difficulty === 'master') maxTensSum = 12;
+
+      if (forceRegroup) {
+        ones1 = 3 + Math.floor(Math.random() * 7);
+        const minOnes2 = 10 - ones1;
+        ones2 = minOnes2 + Math.floor(Math.random() * (10 - minOnes2));
+        tens1 = 1 + Math.floor(Math.random() * Math.max(1, maxTensSum - 2));
+        tens2 = 1 + Math.floor(Math.random() * Math.max(1, maxTensSum - tens1));
+      } else {
+        ones1 = 1 + Math.floor(Math.random() * 8);
+        ones2 = Math.floor(Math.random() * (10 - ones1));
+        tens1 = 1 + Math.floor(Math.random() * Math.max(1, maxTensSum - 1));
+        tens2 = 1 + Math.floor(Math.random() * Math.max(1, maxTensSum - tens1));
+      }
+
+      const onesSum = ones1 + ones2;
+      const hasRegrouping = onesSum >= 10;
+      const onesDigit = onesSum % 10;
+      const carry = hasRegrouping ? 1 : 0;
+      const tensSum = tens1 + tens2 + carry;
+      const totalSum = tensSum * 10 + onesDigit;
+
+      // Safe ones distractors
+      const onesCorrect = String(onesDigit);
+      const onesChoicesSet = new Set([onesCorrect]);
+      if (hasRegrouping) {
+        onesChoicesSet.add(String(onesSum));
+        onesChoicesSet.add(String((onesDigit + 1) % 10));
+        onesChoicesSet.add(String((onesDigit + 9) % 10));
+      } else {
+        onesChoicesSet.add(String((onesDigit + 1) % 10));
+        onesChoicesSet.add(String((onesDigit + 9) % 10));
+        onesChoicesSet.add(String(Math.abs(ones1 - ones2)));
+      }
+      let fallbackOnes = 0;
+      while (onesChoicesSet.size < 4 && fallbackOnes < 10) {
+        onesChoicesSet.add(String(fallbackOnes));
+        fallbackOnes++;
+      }
+      const onesChoices = Array.from(onesChoicesSet).slice(0, 4);
+      for (let i = onesChoices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [onesChoices[i], onesChoices[j]] = [onesChoices[j], onesChoices[i]];
+      }
+
+      // Safe tens distractors (guaranteed to terminate even if tensSum is 1 or 2)
+      const tensCorrect = String(tensSum);
+      const tensChoicesSet = new Set([tensCorrect]);
+      if (hasRegrouping) {
+        tensChoicesSet.add(String(Math.max(1, tens1 + tens2)));
+        tensChoicesSet.add(String(tensSum + 1));
+        tensChoicesSet.add(String(Math.max(1, tensSum - 1)));
+      } else {
+        tensChoicesSet.add(String(tensSum + 1));
+        tensChoicesSet.add(String(Math.max(1, tensSum - 1)));
+        tensChoicesSet.add(String(tensSum + 2));
+      }
+      let fallbackTens = 1;
+      while (tensChoicesSet.size < 4 && fallbackTens < 20) {
+        tensChoicesSet.add(String(tensSum + fallbackTens));
+        if (tensChoicesSet.size < 4 && tensSum - fallbackTens >= 1) {
+          tensChoicesSet.add(String(tensSum - fallbackTens));
+        }
+        fallbackTens++;
+      }
+      let extraTens = 1;
+      while (tensChoicesSet.size < 4) {
+        tensChoicesSet.add(String(extraTens));
+        extraTens++;
+      }
+
+      const tensChoices = Array.from(tensChoicesSet).slice(0, 4);
+      for (let i = tensChoices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tensChoices[i], tensChoices[j]] = [tensChoices[j], tensChoices[i]];
+      }
+
+      return {
+        type: 'addition',
+        tens1, ones1, tens2, ones2,
+        hasRegrouping,
+        onesSum, onesDigit, carry, tensSum, totalSum,
+        currentStep: 'ones',
+        steps: {
+          ones: { correct: onesCorrect, choices: onesChoices, correctIndex: onesChoices.indexOf(onesCorrect) },
+          tens: { correct: tensCorrect, choices: tensChoices, correctIndex: tensChoices.indexOf(tensCorrect) }
+        }
+      };
+    }
+
+    generateSubtractionQuestion() {
+      const forceBorrow = Math.random() < 0.28;
+      let tens1, ones1, tens2, ones2;
+
+      let maxTens = 6;
+      if (this.difficulty === 'rookie') maxTens = 4;
+      else if (this.difficulty === 'master') maxTens = 9;
+
+      if (forceBorrow) {
+        tens1 = 2 + Math.floor(Math.random() * Math.max(1, maxTens - 1));
+        tens2 = 1 + Math.floor(Math.random() * Math.max(1, tens1 - 1));
+        ones1 = Math.floor(Math.random() * 6);
+        ones2 = (ones1 + 1) + Math.floor(Math.random() * (9 - ones1));
+      } else {
+        tens1 = 2 + Math.floor(Math.random() * Math.max(1, maxTens - 1));
+        tens2 = 1 + Math.floor(Math.random() * tens1);
+        ones1 = 2 + Math.floor(Math.random() * 8);
+        ones2 = Math.floor(Math.random() * (ones1 + 1));
+      }
+
+      const hasRegrouping = ones1 < ones2;
+      const borrowedOnes = hasRegrouping ? ones1 + 10 : ones1;
+      const borrowedTens = hasRegrouping ? tens1 - 1 : tens1;
+      const onesDiff = borrowedOnes - ones2;
+      const tensDiff = borrowedTens - tens2;
+      const totalDiff = tensDiff * 10 + onesDiff;
+
+      // Safe ones choices
+      const onesCorrect = String(onesDiff);
+      const onesChoicesSet = new Set([onesCorrect]);
+      onesChoicesSet.add(String((onesDiff + 1) % 10));
+      onesChoicesSet.add(String((onesDiff + 9) % 10));
+      onesChoicesSet.add(String(Math.abs(ones2 - ones1)));
+
+      let fallbackOnes = 0;
+      while (onesChoicesSet.size < 4 && fallbackOnes < 10) {
+        onesChoicesSet.add(String(fallbackOnes));
+        fallbackOnes++;
+      }
+      const onesChoices = Array.from(onesChoicesSet).slice(0, 4);
+      for (let i = onesChoices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [onesChoices[i], onesChoices[j]] = [onesChoices[j], onesChoices[i]];
+      }
+
+      // Safe tens choices: Fixed critical bug where tensDiff = 0 hung the loop forever!
+      const tensCorrect = String(tensDiff);
+      const tensChoicesSet = new Set([tensCorrect]);
+      tensChoicesSet.add(String(tensDiff + 1));
+      if (tensDiff - 1 >= 0) tensChoicesSet.add(String(tensDiff - 1));
+      tensChoicesSet.add(String(tensDiff + 2));
+
+      let fallbackDiff = 1;
+      while (tensChoicesSet.size < 4 && fallbackDiff < 20) {
+        tensChoicesSet.add(String(tensDiff + fallbackDiff));
+        if (tensChoicesSet.size < 4 && tensDiff - fallbackDiff >= 0) {
+          tensChoicesSet.add(String(tensDiff - fallbackDiff));
+        }
+        fallbackDiff++;
+      }
+      let extraDiff = 0;
+      while (tensChoicesSet.size < 4) {
+        tensChoicesSet.add(String(extraDiff));
+        extraDiff++;
+      }
+
+      const tensChoices = Array.from(tensChoicesSet).slice(0, 4);
+      for (let i = tensChoices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tensChoices[i], tensChoices[j]] = [tensChoices[j], tensChoices[i]];
+      }
+
+      return {
+        type: 'subtraction',
+        tens1, ones1, tens2, ones2,
+        hasRegrouping, borrowedOnes, borrowedTens, onesDiff, tensDiff, totalDiff,
+        currentStep: 'ones',
+        steps: {
+          ones: { correct: onesCorrect, choices: onesChoices, correctIndex: onesChoices.indexOf(onesCorrect) },
+          tens: { correct: tensCorrect, choices: tensChoices, correctIndex: tensChoices.indexOf(tensCorrect) }
+        }
+      };
+    }
+  }
+
+  const CHAMPION_DEFS = {
+    ignis: { id: 'ignis', name: 'Ignis', title: 'Fire Pyromancer', color: '#FF3D00', emoji: '🐲', rarity: 'Legendary' },
+    aurelia: { id: 'aurelia', name: 'Aurelia', title: 'Solar Gryphon', color: '#FFD54F', emoji: '🦅', rarity: 'Mythic' },
+    kaelen: { id: 'kaelen', name: 'Kaelen', title: 'Storm Tiger', color: '#00E5FF', emoji: '🐅', rarity: 'Legendary' },
+    torgar: { id: 'torgar', name: 'Torgar', title: 'Mecha Turtle', color: '#00E676', emoji: '🐢', rarity: 'Epic' },
+    lyra: { id: 'lyra', name: 'Lyra', title: 'Astral Kitsune', color: '#E040FB', emoji: '🦊', rarity: 'Mythic' },
+    boreas: { id: 'boreas', name: 'Boreas', title: 'Frost Paladin', color: '#00B0FF', emoji: '🐺', rarity: 'Legendary' },
+    zephyr: { id: 'zephyr', name: 'Zephyr', title: 'Speed Ostrich', color: '#FF4081', emoji: '🦤', rarity: 'Epic' },
+    nyx: { id: 'nyx', name: 'Nyx', title: 'Shadow Assassin', color: '#7C4DFF', emoji: '🐆', rarity: 'Mythic' },
+    barnaby: { id: 'barnaby', name: 'Barnaby', title: 'Royal Knight', color: '#FFC400', emoji: '🐶', rarity: 'Epic' },
+    bubbles: { id: 'bubbles', name: 'Bubbles', title: 'Ocean Shaman', color: '#1DE9B6', emoji: '🫧', rarity: 'Legendary' }
+  };
+
+  class Racer {
+    constructor(charKey, lane, isPlayer = false) {
+      this.charKey = charKey;
+      const def = CHAMPION_DEFS[charKey] || CHAMPION_DEFS['ignis'];
+      this.id = def.id;
+      this.name = def.name;
+      this.lane = lane;
+      this.color = def.color;
+      this.avatarEmoji = def.emoji;
+      this.isPlayer = isPlayer;
+
+      this.distance = 0;
+      this.baseSpeed = isPlayer ? 4.0 : 10.2;
+      this.state = 'running';
+      this.stateTimer = 0;
+      this.bouncePhase = Math.random() * Math.PI * 2;
+      this.nextSurgeIn = isPlayer ? 9999 : (3.5 + Math.random() * 4.0);
+    }
+
+    update(dt, playerDistance) {
+      if (isNaN(dt) || dt <= 0) dt = 0.016;
+      const jogFrequency = this.state === 'super' ? 10.5 : (this.state === 'turbo' ? 8.8 : (this.isPlayer && this.state === 'running' ? 4.2 : 6.8));
+      this.bouncePhase += dt * jogFrequency;
+
+      if (this.stateTimer > 0) {
+        this.stateTimer -= dt;
+        if (this.stateTimer <= 0) this.state = 'running';
+      }
+
+      if (!this.isPlayer) {
+        this.nextSurgeIn -= dt;
+        if (this.nextSurgeIn <= 0) {
+          this.state = 'turbo';
+          this.stateTimer = 0.9 + Math.random() * 0.5;
+          this.nextSurgeIn = 4.0 + Math.random() * 4.5;
+        }
+      }
+
+      let effectiveSpeed = this.baseSpeed;
+      if (this.state === 'stumble') effectiveSpeed = 1.8;
+      else if (this.state === 'turbo') effectiveSpeed = this.isPlayer ? 10.5 : (this.baseSpeed + 2.4);
+      else if (this.state === 'super') effectiveSpeed = this.isPlayer ? 13.0 : (this.baseSpeed + 3.6);
+
+      if (!this.isPlayer && playerDistance !== undefined) {
+        const gap = playerDistance - this.distance;
+        if (gap > 0) {
+          if (this.lane === 1 && gap > 30) effectiveSpeed += 2.0;
+          else if (gap > 40) effectiveSpeed += 1.3;
+        } else if (gap < -45) {
+          effectiveSpeed = Math.min(effectiveSpeed, 8.8);
+        }
+      }
+
+      this.distance += effectiveSpeed * dt;
+    }
+  }
+
+  class ParticlePool {
+    constructor() {
+      this.particles = [];
+    }
+
+    spawnDust(x, y) {
+      if (this.particles.length > 120) return;
+      this.particles.push({
+        type: 'dust',
+        x, y,
+        vx: -35 - Math.random() * 25,
+        vy: -8 + Math.random() * 16,
+        radius: 3.5 + Math.random() * 3.5,
+        alpha: 0.7,
+        color: '#FFD54F',
+        decay: 1.4
+      });
+    }
+
+    spawnSpeedLine(x, y, color = '#FFD54F') {
+      if (this.particles.length > 120) return;
+      this.particles.push({
+        type: 'line',
+        x, y: y + (Math.random() * 24 - 12),
+        length: 22 + Math.random() * 28,
+        vx: -140 - Math.random() * 60,
+        vy: 0,
+        alpha: 0.85,
+        color,
+        decay: 2.0
+      });
+    }
+
+    spawnConfetti(w, h) {
+      const colors = ['#FFD54F', '#00F5D4', '#FF2E93', '#7928CA', '#00C2FF', '#FFFFFF'];
+      for (let i = 0; i < 90; i++) {
+        this.particles.push({
+          type: 'confetti',
+          x: Math.random() * w,
+          y: -20 - Math.random() * 120,
+          vx: (Math.random() - 0.5) * 160,
+          vy: 110 + Math.random() * 180,
+          rotation: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 6,
+          w: 8 + Math.random() * 8,
+          h: 5 + Math.random() * 6,
+          alpha: 1.0,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          decay: 0.22
+        });
+      }
+    }
+
+    updateAndRender(ctx, dt) {
+      for (let i = this.particles.length - 1; i >= 0; i--) {
+        const p = this.particles[i];
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.alpha -= p.decay * dt;
+
+        if (p.alpha <= 0) {
+          this.particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha);
+
+        if (p.type === 'dust') {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+        } else if (p.type === 'line') {
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = 2.2;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p.x - p.length, p.y);
+          ctx.stroke();
+        } else if (p.type === 'confetti') {
+          p.rotation += p.rotSpeed * dt;
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
+
+        ctx.restore();
+      }
+    }
+  }
+
+  class TrackRenderer {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas ? canvas.getContext('2d') : null;
+      this.particles = new ParticlePool();
+      this.trackScroll = 0;
+      this.resize();
+      window.addEventListener('resize', () => this.resize());
+    }
+
+    resize() {
+      if (!this.canvas || !this.canvas.parentElement) return;
+      const rect = this.canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      this.width = rect.width || 320;
+      this.height = rect.height || 200;
+      this.canvas.width = this.width * dpr;
+      this.canvas.height = this.height * dpr;
+      if (this.ctx) {
+        this.ctx.resetTransform();
+        this.ctx.scale(dpr, dpr);
+      }
+    }
+
+    render(racers, player, dt) {
+      if (!this.ctx || !racers || !racers.length || !player) return;
+      const ctx = this.ctx;
+      const w = this.width;
+      const h = this.height;
+
+      const scrollSpeed = player.state === 'super' ? 220 : (player.state === 'turbo' ? 160 : (player.state === 'stumble' ? 25 : 55));
+      this.trackScroll = (this.trackScroll + dt * scrollSpeed) % 60;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Deep sky gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.44);
+      skyGrad.addColorStop(0, '#0D1326');
+      skyGrad.addColorStop(0.5, '#1A2142');
+      skyGrad.addColorStop(1, '#2E386B');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, h * 0.44);
+
+      // Glowing Mana Sun
+      ctx.beginPath();
+      ctx.arc(w * 0.85, h * 0.2, 26, 0, Math.PI * 2);
+      ctx.fillStyle = '#FFE082';
+      ctx.shadowColor = '#FFB300';
+      ctx.shadowBlur = 24;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Distant castle towers
+      ctx.fillStyle = '#1D2547';
+      ctx.beginPath();
+      ctx.moveTo(w * 0.15, h * 0.44);
+      ctx.lineTo(w * 0.22, h * 0.28);
+      ctx.lineTo(w * 0.29, h * 0.44);
+      ctx.lineTo(w * 0.55, h * 0.44);
+      ctx.lineTo(w * 0.62, h * 0.32);
+      ctx.lineTo(w * 0.69, h * 0.44);
+      ctx.fill();
+
+      // Track Lanes
+      const trackTop = h * 0.42;
+      const trackHeight = h - trackTop;
+      const laneHeight = trackHeight / 4;
+
+      const groundGrad = ctx.createLinearGradient(0, trackTop, 0, h);
+      groundGrad.addColorStop(0, '#262D4A');
+      groundGrad.addColorStop(0.5, '#1A1F36');
+      groundGrad.addColorStop(1, '#101424');
+      ctx.fillStyle = groundGrad;
+      ctx.fillRect(0, trackTop, w, trackHeight);
+
+      // Carved lane dividers
+      ctx.strokeStyle = 'rgba(255, 213, 79, 0.45)';
+      ctx.lineWidth = 2.2;
+      ctx.setLineDash([24, 18]);
+      ctx.lineDashOffset = -this.trackScroll;
+
+      for (let l = 1; l <= 3; l++) {
+        const y = trackTop + l * laneHeight;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+
+      // Lane labels with student custom name
+      for (let l = 0; l < 4; l++) {
+        const centerY = trackTop + l * laneHeight + laneHeight * 0.5;
+        const laneRacer = racers.find(r => r.lane === l);
+        if (laneRacer) {
+          if (laneRacer.isPlayer) {
+            ctx.fillStyle = 'rgba(255, 213, 79, 0.22)';
+            ctx.fillRect(0, trackTop + l * laneHeight, 155, laneHeight);
+            ctx.fillStyle = '#FFD54F';
+            ctx.font = 'bold 11px "Outfit", sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`👑 L1: ${laneRacer.name.toUpperCase()} (YOU)`, 8, centerY + 4);
+          } else {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+            ctx.font = 'bold 10px "Outfit", sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`L${l + 1}: ${laneRacer.name}`, 8, centerY + 4);
+          }
+        }
+      }
+
+      this.particles.updateAndRender(ctx, dt);
+
+      racers.forEach((racer) => {
+        const laneY = trackTop + racer.lane * laneHeight + laneHeight * 0.5;
+        const relativeDistDiff = racer.distance - player.distance;
+        const screenX = Math.max(55, Math.min(w - 60, (w * 0.42) + (relativeDistDiff * 2.1)));
+        this.drawChampion(ctx, racer, screenX, laneY);
+      });
+    }
+
+    drawChampion(ctx, racer, x, y) {
+      ctx.save();
+      const bounceY = Math.sin(racer.bouncePhase) * 3;
+      const posX = x;
+      const posY = y + bounceY;
+
+      if (racer.state === 'running' || racer.state === 'turbo' || racer.state === 'super') {
+        if (Math.random() < 0.24) this.particles.spawnDust(posX - 16, posY + 12);
+      }
+      if (racer.state === 'turbo') {
+        this.particles.spawnSpeedLine(posX - 8, posY, '#FFD54F');
+      } else if (racer.state === 'super') {
+        this.particles.spawnSpeedLine(posX - 8, posY, '#00F5D4');
+      }
+
+      ctx.beginPath();
+      ctx.ellipse(posX, y + 14, 20, 6, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      ctx.fill();
+
+      if (racer.state === 'turbo' || racer.state === 'super') {
+        ctx.beginPath();
+        ctx.arc(posX, posY, 26, 0, Math.PI * 2);
+        ctx.fillStyle = racer.state === 'super' ? 'rgba(0, 245, 212, 0.3)' : 'rgba(255, 213, 79, 0.3)';
+        ctx.fill();
+      }
+
+      const legPhase = Math.sin(racer.bouncePhase);
+      ctx.fillStyle = racer.color;
+      ctx.fillStyle = '#141A30';
+      ctx.fillRect(posX - 6 + legPhase * 5, posY + 8, 5, 7);
+      ctx.fillRect(posX + 2 - legPhase * 5, posY + 8, 5, 7);
+
+      const bodyGrad = ctx.createLinearGradient(posX - 14, posY - 10, posX + 14, posY + 10);
+      bodyGrad.addColorStop(0, racer.color);
+      bodyGrad.addColorStop(1, '#0B0F20');
+      ctx.fillStyle = bodyGrad;
+      ctx.beginPath();
+      ctx.roundRect(posX - 14, posY - 12, 28, 22, 8);
+      ctx.fill();
+      ctx.strokeStyle = '#FFD54F';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#FFD54F';
+      ctx.beginPath();
+      ctx.arc(posX - 12, posY - 6, 4.5, 0, Math.PI * 2);
+      ctx.arc(posX + 12, posY - 6, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.font = '22px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(racer.avatarEmoji, posX, posY - 1);
+
+      const badgeY = posY - 30;
+      ctx.save();
+      if (racer.isPlayer) {
+        const nameText = `👑 ${racer.name.toUpperCase()} (YOU)`;
+        ctx.font = 'bold 11px "Outfit", sans-serif';
+        const txtWidth = ctx.measureText(nameText).width;
+        const badgeW = Math.max(88, txtWidth + 20);
+        const badgeH = 22;
+        const badgeX = posX - badgeW / 2;
+
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 2;
+
+        ctx.beginPath();
+        ctx.roundRect(badgeX, badgeY - badgeH / 2, badgeW, badgeH, 11);
+        const pillGrad = ctx.createLinearGradient(badgeX, badgeY - badgeH / 2, badgeX, badgeY + badgeH / 2);
+        pillGrad.addColorStop(0, '#FFF59D');
+        pillGrad.addColorStop(0.5, '#FFD54F');
+        pillGrad.addColorStop(1, '#FF8F00');
+        ctx.fillStyle = pillGrad;
+        ctx.fill();
+
+        ctx.lineWidth = 1.8;
+        ctx.strokeStyle = '#4E342E';
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#3E2723';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(nameText, posX, badgeY);
+      } else {
+        const nameText = racer.name;
+        ctx.font = 'bold 10px "Outfit", sans-serif';
+        const txtWidth = ctx.measureText(nameText).width;
+        const badgeW = Math.max(54, txtWidth + 14);
+        const badgeH = 17;
+        const badgeX = posX - badgeW / 2;
+
+        ctx.beginPath();
+        ctx.roundRect(badgeX, badgeY - badgeH / 2, badgeW, badgeH, 8);
+        ctx.fillStyle = 'rgba(10, 13, 25, 0.85)';
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(255, 213, 79, 0.4)';
+        ctx.stroke();
+
+        ctx.fillStyle = '#F8FAFC';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(nameText, posX, badgeY);
+      }
+      ctx.restore();
+
+      ctx.restore();
+    }
+  }
+
+  class FireworksManager {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas ? canvas.getContext('2d') : null;
+      this.sparks = [];
+      this.running = false;
+      this.animId = null;
+      this.lastSpawn = 0;
+      this.resize();
+      window.addEventListener('resize', () => this.resize());
+    }
+
+    resize() {
+      if (!this.canvas || !this.canvas.parentElement) return;
+      const rect = this.canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      this.width = rect.width || 320;
+      this.height = rect.height || 320;
+      this.canvas.width = this.width * dpr;
+      this.canvas.height = this.height * dpr;
+      if (this.ctx) {
+        this.ctx.resetTransform();
+        this.ctx.scale(dpr, dpr);
+      }
+    }
+
+    startCelebration() {
+      this.resize();
+      this.running = true;
+      this.sparks = [];
+
+      const nameEl = document.getElementById('winnerPlayerBigName');
+      const boxRect = nameEl ? nameEl.getBoundingClientRect() : null;
+      const parentRect = this.canvas ? this.canvas.getBoundingClientRect() : null;
+
+      let originX = this.width * 0.5;
+      let originY = this.height * 0.25;
+
+      if (boxRect && parentRect) {
+        originX = (boxRect.left + boxRect.width * 0.5) - parentRect.left;
+        originY = (boxRect.top + boxRect.height * 0.5) - parentRect.top;
+      }
+
+      this.createBurst(originX - 70, originY - 15, '#FFD54F');
+      this.createBurst(originX + 70, originY - 15, '#FF2E93');
+      this.createBurst(originX, originY - 45, '#00F5D4');
+
+      this.lastTime = performance.now();
+      const loop = (t) => {
+        if (!this.running) return;
+        const dt = Math.min(0.1, Math.max(0.001, (t - this.lastTime) / 1000));
+        this.lastTime = t;
+
+        if (t - this.lastSpawn > 480) {
+          this.lastSpawn = t;
+          const spreadX = originX + (Math.random() - 0.5) * 220;
+          const spreadY = originY + (Math.random() - 0.5) * 90;
+          const colors = ['#FFD54F', '#FF2E93', '#00F5D4', '#00B4D8', '#9D4EDD', '#FFFFFF'];
+          this.createBurst(spreadX, spreadY, colors[Math.floor(Math.random() * colors.length)]);
+          sound.playFireworkBoom(Math.random() < 0.5);
+        }
+
+        this.render(dt);
+        this.animId = requestAnimationFrame(loop);
+      };
+      this.animId = requestAnimationFrame(loop);
+    }
+
+    stop() {
+      this.running = false;
+      if (this.animId) cancelAnimationFrame(this.animId);
+      this.sparks = [];
+      if (this.ctx && this.canvas) {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+      }
+    }
+
+    createBurst(x, y, baseColor) {
+      if (this.sparks.length > 250) this.sparks.splice(0, 80);
+      const colors = [baseColor, '#FFE082', '#FFFFFF', '#FF80AB', '#80D8FF'];
+      const count = 36 + Math.floor(Math.random() * 16);
+
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.25;
+        const speed = 75 + Math.random() * 145;
+        this.sparks.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          gravity: 55,
+          alpha: 1.0,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: 2.5 + Math.random() * 3,
+          decay: 0.75 + Math.random() * 0.45
+        });
+      }
+    }
+
+    render(dt) {
+      if (!this.ctx) return;
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      for (let i = this.sparks.length - 1; i >= 0; i--) {
+        const s = this.sparks[i];
+        s.x += s.vx * dt;
+        s.y += s.vy * dt;
+        s.vy += s.gravity * dt;
+        s.alpha -= s.decay * dt;
+
+        if (s.alpha <= 0) {
+          this.sparks.splice(i, 1);
+          continue;
+        }
+
+        this.ctx.save();
+        this.ctx.globalAlpha = Math.max(0, s.alpha);
+        this.ctx.fillStyle = s.color;
+        this.ctx.shadowColor = s.color;
+        this.ctx.shadowBlur = 8;
+        this.ctx.beginPath();
+        this.ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+      }
+    }
+  }
+
+  class TimeDashersGame {
+    constructor() {
+      this.canvas = document.getElementById('raceCanvas');
+      this.renderer = new TrackRenderer(this.canvas);
+      this.qEngine = new QuestionEngine();
+
+      this.state = 'MENU';
+      this.selectedCharKey = 'ignis';
+      this.playerName = '';
+      this.currentTopic = 'clock';
+      this.isTransitioning = false; // Anti-spam lock preventing double-tap race conditions
+
+      this.totalRaceDuration = 60.0;
+      this.raceTimeLeft = 60.0;
+      this.lastSecondFloor = 60;
+
+      this.bonusMax = 8.0;
+      this.bonusTimeLeft = 8.0;
+
+      this.currentQuestion = null;
+      this.questionNumber = 0;
+      this.streak = 0;
+      this.maxStreak = 0;
+      this.totalSolved = 0;
+      this.totalAttempts = 0;
+
+      this.domStreak = document.getElementById('streakCount');
+      this.domStreakBadge = document.getElementById('streakBadge');
+      this.domStopwatchHud = document.getElementById('stopwatchHud');
+      this.domCountdownText = document.getElementById('raceCountdownText');
+      this.domTimeProgressBar = document.getElementById('timeProgressBar');
+      this.domBonusBar = document.getElementById('bonusBar');
+      this.domBonusTimerText = document.getElementById('bonusTimerText');
+      this.domPlayerDist = document.getElementById('playerDistanceText');
+      this.domLiveRankText = document.getElementById('liveRankText');
+      this.domLiveRankBadge = document.getElementById('liveRankBadge');
+      this.domRaceToast = document.getElementById('raceToast');
+      this.domPlayerNameInput = document.getElementById('playerNameInput');
+      this.domQuestionCounter = document.getElementById('questionCounter');
+
+      this.clockDisplayWrap = document.getElementById('clockDisplayWrap');
+      this.additionDisplayWrap = document.getElementById('additionDisplayWrap');
+      this.hourHand = document.getElementById('hourHandGroup');
+      this.minHand = document.getElementById('minuteHandGroup');
+      this.answerButtons = Array.from(document.querySelectorAll('.answer-btn'));
+
+      this.addTens1 = document.getElementById('addTens1');
+      this.addOnes1 = document.getElementById('addOnes1');
+      this.addTens2 = document.getElementById('addTens2');
+      this.addOnes2 = document.getElementById('addOnes2');
+      this.addRegroupHint = document.getElementById('addRegroupHint');
+      this.mathOperatorSymbol = document.getElementById('mathOperatorSymbol');
+
+      this.addTypeBadge = document.getElementById('addTypeBadge');
+      this.addStepCounterBadge = document.getElementById('addStepCounterBadge');
+      this.addStepPromptBanner = document.getElementById('addStepPromptBanner');
+      this.addCarryBadge = document.getElementById('addCarryBadge');
+      this.tensColWrap = document.getElementById('tensColWrap');
+      this.onesColWrap = document.getElementById('onesColWrap');
+      this.addResultTens = document.getElementById('addResultTens');
+      this.addResultOnes = document.getElementById('addResultOnes');
+
+      const fwCanvas = document.getElementById('fireworksCanvas');
+      this.fireworksManager = fwCanvas ? new FireworksManager(fwCanvas) : null;
+
+      this.setupRacers();
+      this.bindEvents();
+
+      this.lastTimestamp = performance.now();
+      requestAnimationFrame((t) => this.loop(t));
+    }
+
+    syncPlayerNameUI() {
+      const name = (this.playerName || (this.domPlayerNameInput ? this.domPlayerNameInput.value.trim() : '') || CHAMPION_DEFS[this.selectedCharKey]?.name || 'Champion').trim();
+      this.playerName = name;
+
+      const activeNameEl = document.getElementById('activeRacerName');
+      if (activeNameEl) activeNameEl.textContent = name;
+
+      const trackNameEl = document.getElementById('trackRacerName');
+      if (trackNameEl) trackNameEl.textContent = name.toUpperCase();
+
+      const cheerNameEl = document.getElementById('cheerStudentName');
+      if (cheerNameEl) cheerNameEl.textContent = name;
+
+      const winnerBigEl = document.getElementById('winnerPlayerBigName');
+      if (winnerBigEl) winnerBigEl.textContent = name.toUpperCase();
+
+      if (this.racers && this.racers[0]) {
+        this.racers[0].name = name;
+      }
+    }
+
+    setTopic(topic) {
+      this.currentTopic = topic;
+      this.qEngine.setTopic(topic);
+
+      const topicIcon = document.getElementById('topicIcon');
+      const topicText = document.getElementById('topicBadgeText');
+      const headerSub = document.getElementById('headerSubLabel');
+
+      const cardClock = document.getElementById('topicCardClock');
+      const cardAdd = document.getElementById('topicCardAddition');
+      const cardSub = document.getElementById('topicCardSubtraction');
+
+      const desc1 = document.getElementById('diffDesc1');
+      const desc2 = document.getElementById('diffDesc2');
+      const desc3 = document.getElementById('diffDesc3');
+
+      const menuOpt1 = document.getElementById('diffMenuOpt1');
+      const menuOpt2 = document.getElementById('diffMenuOpt2');
+      const menuOpt3 = document.getElementById('diffMenuOpt3');
+      const divLabel = document.getElementById('divisionSectionLabel');
+
+      if (topic === 'addition') {
+        if (topicIcon) topicIcon.textContent = '➕';
+        if (topicText) topicText.textContent = 'ADDITION';
+        if (headerSub) headerSub.innerHTML = '<span>➕</span> 2-Digit Regrouping Dash';
+
+        if (cardAdd) cardAdd.classList.add('topic-active');
+        if (cardClock) cardClock.classList.remove('topic-active');
+        if (cardSub) cardSub.classList.remove('topic-active');
+
+        if (divLabel) divLabel.textContent = 'SECTION 4: ADDITION SKILL DIVISION';
+        if (desc1) desc1.textContent = 'Sums < 50';
+        if (desc2) desc2.textContent = 'Sums < 100';
+        if (desc3) desc3.textContent = 'Sums 100+';
+
+        if (menuOpt1) menuOpt1.textContent = 'Rookie (Sums < 50)';
+        if (menuOpt2) menuOpt2.textContent = 'Adventurer (Sums < 100)';
+        if (menuOpt3) menuOpt3.textContent = 'Master (Sums 100+)';
+
+        if (this.mathOperatorSymbol) this.mathOperatorSymbol.textContent = '+';
+        if (this.clockDisplayWrap) this.clockDisplayWrap.classList.add('hidden');
+        if (this.additionDisplayWrap) this.additionDisplayWrap.classList.remove('hidden');
+
+      } else if (topic === 'subtraction') {
+        if (topicIcon) topicIcon.textContent = '➖';
+        if (topicText) topicText.textContent = 'SUBTRACTION';
+        if (headerSub) headerSub.innerHTML = '<span>➖</span> 2-Digit Subtraction Dash';
+
+        if (cardSub) cardSub.classList.add('topic-active');
+        if (cardClock) cardClock.classList.remove('topic-active');
+        if (cardAdd) cardAdd.classList.remove('topic-active');
+
+        if (divLabel) divLabel.textContent = 'SECTION 4: SUBTRACTION SKILL DIVISION';
+        if (desc1) desc1.textContent = 'Diffs < 30';
+        if (desc2) desc2.textContent = 'Diffs < 60';
+        if (desc3) desc3.textContent = 'Diffs 60+';
+
+        if (menuOpt1) menuOpt1.textContent = 'Rookie (Diffs < 30)';
+        if (menuOpt2) menuOpt2.textContent = 'Adventurer (Diffs < 60)';
+        if (menuOpt3) menuOpt3.textContent = 'Master (Diffs 60+)';
+
+        if (this.mathOperatorSymbol) this.mathOperatorSymbol.textContent = '−';
+        if (this.clockDisplayWrap) this.clockDisplayWrap.classList.add('hidden');
+        if (this.additionDisplayWrap) this.additionDisplayWrap.classList.remove('hidden');
+
+      } else {
+        if (topicIcon) topicIcon.textContent = '⏱️';
+        if (topicText) topicText.textContent = 'CLOCKS';
+        if (headerSub) headerSub.innerHTML = '<span>⏱️</span> 60s Grand Arena Time Attack';
+
+        if (cardClock) cardClock.classList.add('topic-active');
+        if (cardAdd) cardAdd.classList.remove('topic-active');
+        if (cardSub) cardSub.classList.remove('topic-active');
+
+        if (divLabel) divLabel.textContent = 'SECTION 4: CLOCK SKILL DIVISION';
+        if (desc1) desc1.textContent = ':00, :30';
+        if (desc2) desc2.textContent = ':15, :45';
+        if (desc3) desc3.textContent = '5-minute';
+
+        if (menuOpt1) menuOpt1.textContent = 'Rookie (:00, :30)';
+        if (menuOpt2) menuOpt2.textContent = 'Adventurer (:15, :45)';
+        if (menuOpt3) menuOpt3.textContent = 'Time Master (5 min)';
+
+        if (this.clockDisplayWrap) this.clockDisplayWrap.classList.remove('hidden');
+        if (this.additionDisplayWrap) this.additionDisplayWrap.classList.add('hidden');
+      }
+
+      this.isTransitioning = false;
+      if (this.state === 'RACING') this.nextQuestion();
+    }
+
+    setupRacers() {
+      const allKeys = Object.keys(CHAMPION_DEFS);
+      const playerCharKey = this.selectedCharKey;
+
+      const availableAiKeys = allKeys.filter(k => k !== playerCharKey);
+      for (let i = availableAiKeys.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [availableAiKeys[i], availableAiKeys[j]] = [availableAiKeys[j], availableAiKeys[i]];
+      }
+      const aiKeys = availableAiKeys.slice(0, 3);
+
+      const enteredName = this.domPlayerNameInput ? this.domPlayerNameInput.value.trim() : '';
+      if (enteredName) {
+        this.playerName = enteredName;
+      } else if (!this.playerName) {
+        this.playerName = CHAMPION_DEFS[playerCharKey]?.name || 'Champion';
+      }
+
+      const playerRacer = new Racer(playerCharKey, 0, true);
+      playerRacer.name = this.playerName;
+      playerRacer.baseSpeed = 4.0;
+
+      let speedMult = 1.0;
+      if (this.qEngine.difficulty === 'rookie') speedMult = 0.88;
+      if (this.qEngine.difficulty === 'master') speedMult = 1.12;
+
+      const aiRacer1 = new Racer(aiKeys[0], 1, false);
+      aiRacer1.baseSpeed = 10.4 * speedMult;
+
+      const aiRacer2 = new Racer(aiKeys[1], 2, false);
+      aiRacer2.baseSpeed = 9.6 * speedMult;
+
+      const aiRacer3 = new Racer(aiKeys[2], 3, false);
+      aiRacer3.baseSpeed = 8.8 * speedMult;
+
+      this.racers = [playerRacer, aiRacer1, aiRacer2, aiRacer3];
+
+      const def = CHAMPION_DEFS[playerCharKey];
+      const activeRacerEmoji = document.getElementById('activeRacerEmoji');
+      if (activeRacerEmoji && def) activeRacerEmoji.textContent = def.emoji;
+
+      const trackRacerEmoji = document.getElementById('trackRacerEmoji');
+      if (trackRacerEmoji && def) trackRacerEmoji.textContent = def.emoji;
+
+      this.syncPlayerNameUI();
+    }
+
+    saveRaceResult(result) {
+      try {
+        let history = JSON.parse(localStorage.getItem('mosyMathHistory')) || [];
+        history.unshift(result);
+        if (history.length > 50) history = history.slice(0, 50); // Keep last 50 matches overall
+        localStorage.setItem('mosyMathHistory', JSON.stringify(history));
+      } catch (e) {
+        console.warn('Could not save to localStorage:', e);
+      }
+    }
+
+    renderPlayerHistory(playerName) {
+      const historyList = document.getElementById('playerHistoryList');
+      if (!historyList) return;
+      historyList.innerHTML = '';
+      
+      let history = [];
+      try { 
+        history = JSON.parse(localStorage.getItem('mosyMathHistory')) || []; 
+      } catch (e) {}
+      
+      // Filter for the exact player name, taking up to 10 most recent
+      const playerRecords = history.filter(r => r.name.toLowerCase() === playerName.toLowerCase()).slice(0, 10);
+      
+      if (playerRecords.length === 0) {
+        historyList.innerHTML = '<div class="text-xs text-purple-300/60 text-center py-4 font-bold">No recent records found.</div>';
+        return;
+      }
+      
+      playerRecords.forEach((record, index) => {
+        const isLatest = index === 0; // The first one in the filtered array is the most recent
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between p-2 rounded-xl border ' + (isLatest ? 'bg-amber-500/20 border-amber-400/60' : 'bg-slate-900/80 border-white/10') + ' text-[10px] sm:text-xs mb-1.5 shrink-0';
+        row.innerHTML = `
+          <div class="flex flex-col gap-0.5">
+            <span class="font-bold ${isLatest ? 'text-amber-300' : 'text-purple-200'}">${record.name}</span>
+            <span class="text-[9px] text-purple-400/70">${record.topic} • ${record.date}</span>
+          </div>
+          <div class="flex items-center gap-3 sm:gap-4">
+            <div class="flex flex-col items-end">
+              <span class="text-emerald-400 font-mono font-bold">${record.accuracy}%</span>
+              <span class="text-[9px] text-purple-300 uppercase">Acc</span>
+            </div>
+            <div class="flex flex-col items-end">
+              <span class="text-cyan-300 font-mono font-bold text-sm">${record.distance}m</span>
+              <span class="text-[9px] text-purple-300 uppercase">Dist</span>
+            </div>
+          </div>
+        `;
+        historyList.appendChild(row);
+      });
+    }
+
+    startRace() {
+      const enteredName = this.domPlayerNameInput ? this.domPlayerNameInput.value.trim() : '';
+      if (enteredName) {
+        this.playerName = enteredName;
+      } else if (!this.playerName) {
+        this.playerName = CHAMPION_DEFS[this.selectedCharKey]?.name || 'Champion';
+      }
+
+      this.setupRacers();
+      this.raceTimeLeft = this.totalRaceDuration;
+      this.lastSecondFloor = Math.ceil(this.raceTimeLeft);
+      this.questionNumber = 0;
+      this.streak = 0;
+      this.maxStreak = 0;
+      this.totalSolved = 0;
+      this.totalAttempts = 0;
+      this.bonusTimeLeft = this.bonusMax;
+      this.isTransitioning = false;
+
+      if (this.domStopwatchHud) {
+        this.domStopwatchHud.classList.remove('anim-timer-alert', 'border-red-500');
+      }
+      if (this.domCountdownText) {
+        this.domCountdownText.classList.remove('text-red-400');
+        this.domCountdownText.classList.add('text-amber-300');
+        this.domCountdownText.textContent = '01:00';
+      }
+      if (this.domTimeProgressBar) this.domTimeProgressBar.style.width = '100%';
+      if (this.domBonusBar) this.domBonusBar.style.width = '100%';
+
+      this.updateStreakUI();
+      this.state = 'RACING';
+      this.nextQuestion();
+      sound.playSelect();
+    }
+
+    bindEvents() {
+      const soundBtn = document.getElementById('soundToggle');
+      if (soundBtn) {
+        soundBtn.addEventListener('click', () => {
+          const isMuted = sound.toggleMute();
+          soundBtn.textContent = isMuted ? '🔇' : '🔊';
+        });
+      }
+
+      const topicToggleBtn = document.getElementById('topicToggleBtn');
+      if (topicToggleBtn) {
+        topicToggleBtn.addEventListener('click', () => {
+          let nextTopic = 'clock';
+          if (this.currentTopic === 'clock') nextTopic = 'addition';
+          else if (this.currentTopic === 'addition') nextTopic = 'subtraction';
+          else nextTopic = 'clock';
+          this.setTopic(nextTopic);
+          sound.playSelect();
+        });
+      }
+
+      const cardClock = document.getElementById('topicCardClock');
+      const cardAdd = document.getElementById('topicCardAddition');
+      const cardSub = document.getElementById('topicCardSubtraction');
+      if (cardClock) cardClock.addEventListener('click', () => { this.setTopic('clock'); sound.playSelect(); });
+      if (cardAdd) cardAdd.addEventListener('click', () => { this.setTopic('addition'); sound.playSelect(); });
+      if (cardSub) cardSub.addEventListener('click', () => { this.setTopic('subtraction'); sound.playSelect(); });
+
+      if (this.domPlayerNameInput) {
+        const updateNameHandler = (e) => {
+          const typed = e.target.value.trim();
+          this.playerName = typed || CHAMPION_DEFS[this.selectedCharKey]?.name || 'Champion';
+          this.syncPlayerNameUI();
+        };
+
+        this.domPlayerNameInput.addEventListener('input', updateNameHandler);
+        this.domPlayerNameInput.addEventListener('change', updateNameHandler);
+        this.domPlayerNameInput.addEventListener('blur', updateNameHandler);
+        this.domPlayerNameInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const btn = document.getElementById('startRaceBtn');
+            if (btn) btn.click();
+          }
+        });
+      }
+
+      document.querySelectorAll('.quick-name-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const rawName = btn.textContent.replace(/^[^\w]+/, '').trim();
+          if (this.domPlayerNameInput) this.domPlayerNameInput.value = rawName;
+          this.playerName = rawName;
+          this.syncPlayerNameUI();
+          sound.playSelect();
+        });
+      });
+
+      const activeTag = document.getElementById('activeRacerTag');
+      const editModal = document.getElementById('editNameModal');
+      const quickInput = document.getElementById('quickNameInput');
+      const cancelNameBtn = document.getElementById('cancelNameEditBtn');
+      const saveNameBtn = document.getElementById('saveNameEditBtn');
+
+      if (activeTag && editModal && quickInput) {
+        activeTag.addEventListener('click', () => {
+          quickInput.value = this.playerName;
+          editModal.classList.remove('hidden');
+          quickInput.focus();
+        });
+      }
+
+      if (cancelNameBtn && editModal) {
+        cancelNameBtn.addEventListener('click', () => editModal.classList.add('hidden'));
+      }
+
+      if (saveNameBtn && editModal && quickInput) {
+        saveNameBtn.addEventListener('click', () => {
+          const updated = quickInput.value.trim();
+          if (updated) {
+            this.playerName = updated;
+            if (this.domPlayerNameInput) this.domPlayerNameInput.value = updated;
+            this.syncPlayerNameUI();
+          }
+          editModal.classList.add('hidden');
+          sound.playSelect();
+        });
+      }
+
+      const charCards = document.querySelectorAll('.hero-card');
+      charCards.forEach(card => {
+        card.addEventListener('click', () => {
+          charCards.forEach(c => {
+            c.classList.remove('hero-card-selected');
+            const ind = c.querySelector('.selected-indicator');
+            if (ind) ind.classList.add('hidden');
+          });
+          card.classList.add('hero-card-selected');
+          const myInd = card.querySelector('.selected-indicator');
+          if (myInd) myInd.classList.remove('hidden');
+
+          this.selectedCharKey = card.getAttribute('data-char');
+          const currentInputVal = this.domPlayerNameInput ? this.domPlayerNameInput.value.trim() : '';
+          if (!currentInputVal) {
+            this.playerName = CHAMPION_DEFS[this.selectedCharKey]?.name || 'Champion';
+          }
+          this.syncPlayerNameUI();
+          sound.playSelect();
+        });
+      });
+
+      const diffBtn = document.getElementById('diffMenuBtn');
+      const diffMenu = document.getElementById('diffMenu');
+      if (diffBtn && diffMenu) {
+        diffBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          diffMenu.classList.toggle('hidden');
+        });
+        document.addEventListener('click', () => diffMenu.classList.add('hidden'));
+      }
+
+      document.querySelectorAll('.diff-option').forEach(el => {
+        el.addEventListener('click', () => this.setDifficulty(el.getAttribute('data-diff')));
+      });
+
+      document.querySelectorAll('.diff-select-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.diff-select-btn').forEach(b => {
+            b.classList.remove('border-amber-400', 'bg-amber-500/20', 'text-amber-200');
+            b.classList.add('border-transparent', 'bg-slate-900', 'text-purple-200');
+          });
+          btn.classList.remove('border-transparent', 'bg-slate-900', 'text-purple-200');
+          btn.classList.add('border-amber-400', 'bg-amber-500/20', 'text-amber-200');
+          this.setDifficulty(btn.getAttribute('data-diff'));
+        });
+      });
+
+      const startRaceBtn = document.getElementById('startRaceBtn');
+      if (startRaceBtn) {
+        startRaceBtn.addEventListener('click', () => {
+          const startOverlay = document.getElementById('startOverlay');
+          if (startOverlay) startOverlay.classList.add('hidden');
+          this.startRace();
+        });
+      }
+
+      const rematchBtn = document.getElementById('rematchBtn');
+      if (rematchBtn) {
+        rematchBtn.addEventListener('click', () => {
+          if (this.fireworksManager) this.fireworksManager.stop();
+          const resultsOverlay = document.getElementById('resultsOverlay');
+          if (resultsOverlay) resultsOverlay.classList.add('hidden');
+          this.startRace();
+        });
+      }
+
+      const changeLevelBtn = document.getElementById('changeLevelBtn');
+      if (changeLevelBtn) {
+        changeLevelBtn.addEventListener('click', () => {
+          if (this.fireworksManager) this.fireworksManager.stop();
+          this.state = 'MENU';
+          const resultsOverlay = document.getElementById('resultsOverlay');
+          if (resultsOverlay) resultsOverlay.classList.add('hidden');
+          const startOverlay = document.getElementById('startOverlay');
+          if (startOverlay) startOverlay.classList.remove('hidden');
+        });
+      }
+
+      this.answerButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (this.state !== 'RACING' || this.isTransitioning) return;
+          this.handleAnswer(parseInt(btn.getAttribute('data-index')));
+        });
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (this.state !== 'RACING' || this.isTransitioning) return;
+        const map = { '1': 0, '2': 1, '3': 2, '4': 3 };
+        if (map.hasOwnProperty(e.key)) {
+          this.handleAnswer(map[e.key]);
+          const targetBtn = this.answerButtons[map[e.key]];
+          if (targetBtn) {
+            targetBtn.classList.add('scale-95');
+            setTimeout(() => targetBtn.classList.remove('scale-95'), 120);
+          }
+        }
+      });
+    }
+
+    setDifficulty(diff) {
+      this.qEngine.setDifficulty(diff);
+      const label = diff === 'rookie' ? 'Rookie' : (diff === 'master' ? 'Time Master' : 'Adventurer');
+      const diffLabel = document.getElementById('diffLabel');
+      if (diffLabel) diffLabel.textContent = label;
+      this.isTransitioning = false;
+      if (this.state === 'RACING') this.nextQuestion();
+    }
+
+    nextQuestion() {
+      this.questionNumber++;
+      this.isTransitioning = false; // Re-enable student input safely
+      if (this.domQuestionCounter) this.domQuestionCounter.textContent = `#${this.questionNumber}`;
+      this.currentQuestion = this.qEngine.generateQuestion();
+      this.bonusTimeLeft = this.bonusMax;
+
+      if (this.currentQuestion.type === 'addition') {
+        if (this.clockDisplayWrap) this.clockDisplayWrap.classList.add('hidden');
+        if (this.additionDisplayWrap) this.additionDisplayWrap.classList.remove('hidden');
+        if (this.mathOperatorSymbol) this.mathOperatorSymbol.textContent = '+';
+
+        if (this.addTens1) this.addTens1.textContent = this.currentQuestion.tens1;
+        if (this.addOnes1) this.addOnes1.textContent = this.currentQuestion.ones1;
+        if (this.addTens2) this.addTens2.textContent = this.currentQuestion.tens2;
+        if (this.addOnes2) this.addOnes2.textContent = this.currentQuestion.ones2;
+
+        if (this.addResultTens) this.addResultTens.textContent = '?';
+        if (this.addResultOnes) this.addResultOnes.textContent = '?';
+        if (this.addCarryBadge) {
+          this.addCarryBadge.textContent = '+1';
+          this.addCarryBadge.classList.add('opacity-0');
+        }
+
+        if (this.addTypeBadge) {
+          if (this.currentQuestion.hasRegrouping) {
+            this.addTypeBadge.className = 'px-2.5 py-0.5 rounded-full bg-amber-500/25 border border-amber-400/50 text-[10px] font-black text-amber-300';
+            this.addTypeBadge.textContent = '⚡ CHALLENGE: REGROUPING!';
+          } else {
+            this.addTypeBadge.className = 'px-2.5 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-400/50 text-[10px] font-black text-emerald-300';
+            this.addTypeBadge.textContent = '🌱 FRIENDLY: NO REGROUPING';
+          }
+        }
+
+        this.renderAdditionStep('ones');
+
+      } else if (this.currentQuestion.type === 'subtraction') {
+        if (this.clockDisplayWrap) this.clockDisplayWrap.classList.add('hidden');
+        if (this.additionDisplayWrap) this.additionDisplayWrap.classList.remove('hidden');
+        if (this.mathOperatorSymbol) this.mathOperatorSymbol.textContent = '−';
+
+        if (this.addTens1) this.addTens1.textContent = this.currentQuestion.tens1;
+        if (this.addOnes1) this.addOnes1.textContent = this.currentQuestion.ones1;
+        if (this.addTens2) this.addTens2.textContent = this.currentQuestion.tens2;
+        if (this.addOnes2) this.addOnes2.textContent = this.currentQuestion.ones2;
+
+        if (this.addResultTens) this.addResultTens.textContent = '?';
+        if (this.addResultOnes) this.addResultOnes.textContent = '?';
+        if (this.addCarryBadge) {
+          this.addCarryBadge.textContent = '−1';
+          this.addCarryBadge.classList.add('opacity-0');
+        }
+
+        if (this.addTypeBadge) {
+          if (this.currentQuestion.hasRegrouping) {
+            this.addTypeBadge.className = 'px-2.5 py-0.5 rounded-full bg-amber-500/25 border border-amber-400/50 text-[10px] font-black text-amber-300';
+            this.addTypeBadge.textContent = '⚡ CHALLENGE: BORROW A TEN!';
+          } else {
+            this.addTypeBadge.className = 'px-2.5 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-400/50 text-[10px] font-black text-emerald-300';
+            this.addTypeBadge.textContent = '🌱 FRIENDLY: NO BORROWING';
+          }
+        }
+
+        this.renderSubtractionStep('ones');
+
+      } else {
+        if (this.clockDisplayWrap) this.clockDisplayWrap.classList.remove('hidden');
+        if (this.additionDisplayWrap) this.additionDisplayWrap.classList.add('hidden');
+
+        const hourDeg = (this.currentQuestion.hour % 12 + this.currentQuestion.minute / 60) * 30;
+        const minDeg = this.currentQuestion.minute * 6;
+
+        if (this.hourHand) this.hourHand.setAttribute('transform', `rotate(${hourDeg} 100 100)`);
+        if (this.minHand) this.minHand.setAttribute('transform', `rotate(${minDeg} 100 100)`);
+
+        this.answerButtons.forEach((btn, i) => {
+          const label = btn.querySelector('.time-label');
+          if (label && this.currentQuestion.choices && this.currentQuestion.choices[i] !== undefined) {
+            label.textContent = this.currentQuestion.choices[i];
+          }
+          btn.classList.remove('ring-4', 'ring-green-400', 'ring-green-300', 'ring-red-400');
+          btn.disabled = false;
+        });
+      }
+    }
+
+    renderSubtractionStep(step) {
+      this.isTransitioning = false;
+      this.currentQuestion.currentStep = step;
+      const q = this.currentQuestion;
+      const stepData = q.steps ? q.steps[step] : null;
+
+      if (step === 'ones') {
+        if (this.addStepCounterBadge) this.addStepCounterBadge.textContent = 'STEP 1 OF 2';
+
+        if (q.hasRegrouping) {
+          if (this.addStepPromptBanner) {
+            this.addStepPromptBanner.className = 'w-full text-center py-1 px-2 mb-1.5 rounded-xl bg-slate-950/95 border-2 border-pink-400/70 text-[11px] sm:text-xs font-black text-pink-300 shadow';
+            this.addStepPromptBanner.textContent = `👉 STEP 1: BORROW 1 TEN & SUBTRACT ONES (${q.borrowedOnes} − ${q.ones2})`;
+          }
+          if (this.addRegroupHint) {
+            this.addRegroupHint.textContent = `⚡ Borrow 1 Ten: ${q.ones1} becomes ${q.borrowedOnes}! ${q.borrowedOnes} − ${q.ones2} = ${q.onesDiff}`;
+          }
+          if (this.addCarryBadge) {
+            this.addCarryBadge.textContent = '−1';
+            this.addCarryBadge.classList.remove('opacity-0');
+          }
+        } else {
+          if (this.addStepPromptBanner) {
+            this.addStepPromptBanner.className = 'w-full text-center py-1 px-2 mb-1.5 rounded-xl bg-slate-950/95 border-2 border-pink-400/70 text-[11px] sm:text-xs font-black text-pink-300 shadow';
+            this.addStepPromptBanner.textContent = `👉 STEP 1: SUBTRACT ONES (${q.ones1} − ${q.ones2})`;
+          }
+          if (this.addRegroupHint) {
+            this.addRegroupHint.textContent = `⚡ Ones: ${q.ones1} − ${q.ones2} = ${q.onesDiff} (No borrowing needed!)`;
+          }
+        }
+
+        if (this.onesColWrap) this.onesColWrap.className = 'flex flex-col items-center p-1.5 active-place-col active-ones-col transition-all duration-200';
+        if (this.tensColWrap) this.tensColWrap.className = 'flex flex-col items-center p-1.5 transition-all duration-200 opacity-60';
+
+        if (this.addResultOnes) this.addResultOnes.className = 'w-11 sm:w-13 text-center text-pink-300 bg-slate-950/90 rounded-xl border-2 border-pink-400 py-0.5 shadow-inner animate-pulse';
+        if (this.addResultTens) this.addResultTens.className = 'w-11 sm:w-13 text-center text-cyan-300 bg-slate-950/90 rounded-xl border-2 border-dashed border-cyan-400/40 py-0.5 opacity-60';
+
+        this.answerButtons.forEach((btn, i) => {
+          const val = stepData ? stepData.choices[i] : undefined;
+          const label = btn.querySelector('.time-label');
+          if (label && val !== undefined) label.textContent = val;
+          btn.classList.remove('ring-4', 'ring-green-400', 'ring-green-300', 'ring-red-400');
+          btn.disabled = false;
+        });
+
+      } else if (step === 'tens') {
+        if (this.addStepCounterBadge) this.addStepCounterBadge.textContent = 'STEP 2 OF 2';
+        if (this.addStepPromptBanner) {
+          this.addStepPromptBanner.className = 'w-full text-center py-1 px-2 mb-1.5 rounded-xl bg-slate-950/95 border-2 border-cyan-400/70 text-[11px] sm:text-xs font-black text-cyan-300 shadow';
+
+          if (q.hasRegrouping) {
+            this.addStepPromptBanner.textContent = `👉 STEP 2: SUBTRACT TENS (${q.borrowedTens} − ${q.tens2})`;
+            if (this.addRegroupHint) this.addRegroupHint.textContent = `⚡ Subtract Tens: ${q.borrowedTens} (after borrowing) − ${q.tens2} = ${q.tensDiff}`;
+          } else {
+            this.addStepPromptBanner.textContent = `👉 STEP 2: SUBTRACT TENS (${q.tens1} − ${q.tens2})`;
+            if (this.addRegroupHint) this.addRegroupHint.textContent = `⚡ Subtract Tens: ${q.tens1} − ${q.tens2} = ${q.tensDiff}`;
+          }
+        }
+
+        if (this.tensColWrap) this.tensColWrap.className = 'flex flex-col items-center p-1.5 active-place-col active-tens-col transition-all duration-200';
+        if (this.onesColWrap) this.onesColWrap.className = 'flex flex-col items-center p-1.5 transition-all duration-200 opacity-90';
+
+        if (this.addResultTens) this.addResultTens.className = 'w-11 sm:w-13 text-center text-cyan-300 bg-slate-950/90 rounded-xl border-2 border-cyan-400 py-0.5 shadow-inner animate-pulse';
+        if (this.addResultOnes) this.addResultOnes.className = 'w-11 sm:w-13 text-center text-pink-300 bg-slate-950/90 rounded-xl border-2 border-pink-400/80 py-0.5';
+
+        this.answerButtons.forEach((btn, i) => {
+          const val = stepData ? stepData.choices[i] : undefined;
+          const label = btn.querySelector('.time-label');
+          if (label && val !== undefined) label.textContent = val;
+          btn.classList.remove('ring-4', 'ring-green-400', 'ring-green-300', 'ring-red-400');
+          btn.disabled = false;
+        });
+      }
+    }
+
+    renderAdditionStep(step) {
+      this.isTransitioning = false;
+      this.currentQuestion.currentStep = step;
+      const q = this.currentQuestion;
+      const stepData = q.steps ? q.steps[step] : null;
+
+      if (step === 'ones') {
+        if (this.addStepCounterBadge) this.addStepCounterBadge.textContent = 'STEP 1 OF 2';
+        if (this.addStepPromptBanner) {
+          this.addStepPromptBanner.className = 'w-full text-center py-1 px-2 mb-1.5 rounded-xl bg-slate-950/95 border-2 border-pink-400/70 text-[11px] sm:text-xs font-black text-pink-300 shadow';
+          this.addStepPromptBanner.textContent = `👉 STEP 1: ADD ONES (${q.ones1} + ${q.ones2})`;
+        }
+
+        if (this.onesColWrap) this.onesColWrap.className = 'flex flex-col items-center p-1.5 active-place-col active-ones-col transition-all duration-200';
+        if (this.tensColWrap) this.tensColWrap.className = 'flex flex-col items-center p-1.5 transition-all duration-200 opacity-60';
+
+        if (this.addResultOnes) this.addResultOnes.className = 'w-11 sm:w-13 text-center text-pink-300 bg-slate-950/90 rounded-xl border-2 border-pink-400 py-0.5 shadow-inner animate-pulse';
+        if (this.addResultTens) this.addResultTens.className = 'w-11 sm:w-13 text-center text-cyan-300 bg-slate-950/90 rounded-xl border-2 border-dashed border-cyan-400/40 py-0.5 opacity-60';
+
+        if (this.addRegroupHint) {
+          if (q.hasRegrouping) this.addRegroupHint.textContent = `⚡ Ones: ${q.ones1} + ${q.ones2} = ${q.onesSum} (Regroup 1 Ten!)`;
+          else this.addRegroupHint.textContent = `⚡ Ones: ${q.ones1} + ${q.ones2} = ${q.onesSum} (No regrouping needed!)`;
+        }
+
+        this.answerButtons.forEach((btn, i) => {
+          const val = stepData ? stepData.choices[i] : undefined;
+          const label = btn.querySelector('.time-label');
+          if (label && val !== undefined) label.textContent = val;
+          btn.classList.remove('ring-4', 'ring-green-400', 'ring-green-300', 'ring-red-400');
+          btn.disabled = false;
+        });
+
+      } else if (step === 'tens') {
+        if (this.addStepCounterBadge) this.addStepCounterBadge.textContent = 'STEP 2 OF 2';
+        if (this.addStepPromptBanner) {
+          this.addStepPromptBanner.className = 'w-full text-center py-1 px-2 mb-1.5 rounded-xl bg-slate-950/95 border-2 border-cyan-400/70 text-[11px] sm:text-xs font-black text-cyan-300 shadow';
+
+          if (q.hasRegrouping) {
+            this.addStepPromptBanner.textContent = `👉 STEP 2: ADD TENS (1 + ${q.tens1} + ${q.tens2})`;
+            if (this.addRegroupHint) this.addRegroupHint.textContent = `⚡ Add Tens: 1 (carried) + ${q.tens1} + ${q.tens2} = ${q.tensSum}`;
+          } else {
+            this.addStepPromptBanner.textContent = `👉 STEP 2: ADD TENS (${q.tens1} + ${q.tens2})`;
+            if (this.addRegroupHint) this.addRegroupHint.textContent = `⚡ Add Tens: ${q.tens1} + ${q.tens2} = ${q.tensSum}`;
+          }
+        }
+
+        if (this.tensColWrap) this.tensColWrap.className = 'flex flex-col items-center p-1.5 active-place-col active-tens-col transition-all duration-200';
+        if (this.onesColWrap) this.onesColWrap.className = 'flex flex-col items-center p-1.5 transition-all duration-200 opacity-90';
+
+        if (this.addResultTens) this.addResultTens.className = 'w-11 sm:w-13 text-center text-cyan-300 bg-slate-950/90 rounded-xl border-2 border-cyan-400 py-0.5 shadow-inner animate-pulse';
+        if (this.addResultOnes) this.addResultOnes.className = 'w-11 sm:w-13 text-center text-pink-300 bg-slate-950/90 rounded-xl border-2 border-pink-400/80 py-0.5';
+
+        this.answerButtons.forEach((btn, i) => {
+          const val = stepData ? stepData.choices[i] : undefined;
+          const label = btn.querySelector('.time-label');
+          if (label && val !== undefined) label.textContent = val;
+          btn.classList.remove('ring-4', 'ring-green-400', 'ring-green-300', 'ring-red-400');
+          btn.disabled = false;
+        });
+      }
+    }
+
+    handleAnswer(choiceIndex) {
+      if (this.state !== 'RACING' || this.isTransitioning) return;
+      this.isTransitioning = true; // Lock further input until step/question transition finishes
+      this.totalAttempts++;
+      const player = this.racers[0];
+
+      if (this.currentQuestion.type === 'addition') {
+        const step = this.currentQuestion.currentStep;
+        const stepData = this.currentQuestion.steps ? this.currentQuestion.steps[step] : null;
+        if (!stepData) {
+          this.isTransitioning = false;
+          return;
+        }
+        const isCorrect = choiceIndex === stepData.correctIndex;
+
+        if (isCorrect) {
+          this.totalSolved++;
+          this.streak++;
+          if (this.streak > this.maxStreak) this.maxStreak = this.streak;
+
+          const speedBonus = this.bonusTimeLeft > 0 ? Math.round((this.bonusTimeLeft / this.bonusMax) * 4) : 0;
+          const stepDash = 15 + speedBonus;
+          player.distance += stepDash;
+
+          if (step === 'ones') {
+            sound.playCorrect();
+            player.state = 'turbo';
+            player.stateTimer = 0.8;
+
+            if (this.answerButtons[choiceIndex]) this.answerButtons[choiceIndex].classList.add('ring-4', 'ring-green-300');
+            if (this.addResultOnes) {
+              this.addResultOnes.textContent = this.currentQuestion.onesDigit;
+              this.addResultOnes.classList.remove('animate-pulse');
+            }
+
+            if (this.currentQuestion.hasRegrouping) {
+              if (this.addCarryBadge) {
+                this.addCarryBadge.textContent = '+1';
+                this.addCarryBadge.classList.remove('opacity-0');
+              }
+              this.showToast(`✨ ONES REGROUPED! +1 Carried! +${stepDash}m`, 'bg-pink-600');
+            } else {
+              this.showToast(`✨ ONES CORRECT! ${this.currentQuestion.ones1} + ${this.currentQuestion.ones2} = ${this.currentQuestion.onesSum} (+${stepDash}m)`, 'bg-pink-600');
+            }
+
+            this.updateStreakUI();
+            setTimeout(() => {
+              if (this.state === 'RACING') this.renderAdditionStep('tens');
+              else this.isTransitioning = false;
+            }, 360);
+
+          } else {
+            if (this.addResultTens) {
+              this.addResultTens.textContent = this.currentQuestion.tensSum;
+              this.addResultTens.classList.remove('animate-pulse');
+            }
+
+            if (this.streak >= 2) {
+              player.state = 'super';
+              player.stateTimer = 1.0;
+              player.distance += 4;
+              sound.playSuperBoost();
+              this.showToast(`🔥 ROYALE SUPER DASH! = ${this.currentQuestion.totalSum} (+${stepDash + 4}m)`, 'bg-amber-600');
+            } else {
+              player.state = 'turbo';
+              player.stateTimer = 0.8;
+              sound.playCorrect();
+              this.showToast(`🎉 EQUATION SOLVED! = ${this.currentQuestion.totalSum} (+${stepDash}m)`, 'bg-emerald-600');
+            }
+
+            if (this.answerButtons[choiceIndex]) this.answerButtons[choiceIndex].classList.add('ring-4', 'ring-green-300');
+            this.updateStreakUI();
+            setTimeout(() => {
+              if (this.state === 'RACING') this.nextQuestion();
+              else this.isTransitioning = false;
+            }, 450);
+          }
+
+        } else {
+          this.streak = Math.max(0, this.streak - 1);
+          player.state = 'stumble';
+          player.stateTimer = 0.6;
+          sound.playWrong();
+
+          document.body.classList.add('shake');
+          setTimeout(() => document.body.classList.remove('shake'), 250);
+
+          this.showToast(`Good try! It was ${stepData.correct}`, 'bg-amber-700');
+          if (this.answerButtons[choiceIndex]) this.answerButtons[choiceIndex].classList.add('ring-4', 'ring-red-400');
+          if (this.answerButtons[stepData.correctIndex]) this.answerButtons[stepData.correctIndex].classList.add('ring-4', 'ring-green-400');
+          this.updateStreakUI();
+          setTimeout(() => {
+            if (this.state === 'RACING') this.nextQuestion();
+            else this.isTransitioning = false;
+          }, 500);
+        }
+
+      } else if (this.currentQuestion.type === 'subtraction') {
+        const step = this.currentQuestion.currentStep;
+        const stepData = this.currentQuestion.steps ? this.currentQuestion.steps[step] : null;
+        if (!stepData) {
+          this.isTransitioning = false;
+          return;
+        }
+        const isCorrect = choiceIndex === stepData.correctIndex;
+
+        if (isCorrect) {
+          this.totalSolved++;
+          this.streak++;
+          if (this.streak > this.maxStreak) this.maxStreak = this.streak;
+
+          const speedBonus = this.bonusTimeLeft > 0 ? Math.round((this.bonusTimeLeft / this.bonusMax) * 4) : 0;
+          const stepDash = 15 + speedBonus;
+          player.distance += stepDash;
+
+          if (step === 'ones') {
+            sound.playCorrect();
+            player.state = 'turbo';
+            player.stateTimer = 0.8;
+
+            if (this.answerButtons[choiceIndex]) this.answerButtons[choiceIndex].classList.add('ring-4', 'ring-green-300');
+            if (this.addResultOnes) {
+              this.addResultOnes.textContent = this.currentQuestion.onesDiff;
+              this.addResultOnes.classList.remove('animate-pulse');
+            }
+
+            if (this.currentQuestion.hasRegrouping) {
+              if (this.addCarryBadge) {
+                this.addCarryBadge.textContent = '−1';
+                this.addCarryBadge.classList.remove('opacity-0');
+              }
+              this.showToast(`✨ BORROWED & SUBTRACTED! +${stepDash}m`, 'bg-pink-600');
+            } else {
+              this.showToast(`✨ ONES CORRECT! ${this.currentQuestion.ones1} − ${this.currentQuestion.ones2} = ${this.currentQuestion.onesDiff} (+${stepDash}m)`, 'bg-pink-600');
+            }
+
+            this.updateStreakUI();
+            setTimeout(() => {
+              if (this.state === 'RACING') this.renderSubtractionStep('tens');
+              else this.isTransitioning = false;
+            }, 360);
+
+          } else {
+            if (this.addResultTens) {
+              this.addResultTens.textContent = this.currentQuestion.tensDiff;
+              this.addResultTens.classList.remove('animate-pulse');
+            }
+
+            if (this.streak >= 2) {
+              player.state = 'super';
+              player.stateTimer = 1.0;
+              player.distance += 4;
+              sound.playSuperBoost();
+              this.showToast(`🔥 ROYALE SUPER DASH! = ${this.currentQuestion.totalDiff} (+${stepDash + 4}m)`, 'bg-amber-600');
+            } else {
+              player.state = 'turbo';
+              player.stateTimer = 0.8;
+              sound.playCorrect();
+              this.showToast(`🎉 EQUATION SOLVED! = ${this.currentQuestion.totalDiff} (+${stepDash}m)`, 'bg-emerald-600');
+            }
+
+            if (this.answerButtons[choiceIndex]) this.answerButtons[choiceIndex].classList.add('ring-4', 'ring-green-300');
+            this.updateStreakUI();
+            setTimeout(() => {
+              if (this.state === 'RACING') this.nextQuestion();
+              else this.isTransitioning = false;
+            }, 450);
+          }
+
+        } else {
+          this.streak = Math.max(0, this.streak - 1);
+          player.state = 'stumble';
+          player.stateTimer = 0.6;
+          sound.playWrong();
+
+          document.body.classList.add('shake');
+          setTimeout(() => document.body.classList.remove('shake'), 250);
+
+          this.showToast(`Good try! It was ${stepData.correct}`, 'bg-amber-700');
+          if (this.answerButtons[choiceIndex]) this.answerButtons[choiceIndex].classList.add('ring-4', 'ring-red-400');
+          if (this.answerButtons[stepData.correctIndex]) this.answerButtons[stepData.correctIndex].classList.add('ring-4', 'ring-green-400');
+          this.updateStreakUI();
+          setTimeout(() => {
+            if (this.state === 'RACING') this.nextQuestion();
+            else this.isTransitioning = false;
+          }, 500);
+        }
+
+      } else {
+        const isCorrect = choiceIndex === this.currentQuestion.correctIndex;
+
+        if (isCorrect) {
+          this.totalSolved++;
+          this.streak++;
+          if (this.streak > this.maxStreak) this.maxStreak = this.streak;
+
+          const baseDash = 30;
+          const speedBonus = this.bonusTimeLeft > 0 ? Math.round((this.bonusTimeLeft / this.bonusMax) * 7) : 0;
+          let forwardDash = baseDash + speedBonus;
+
+          if (this.streak >= 2) {
+            player.state = 'super';
+            player.stateTimer = 1.0;
+            forwardDash += 6;
+            sound.playSuperBoost();
+            this.showToast(`🔥 ROYALE SUPER DASH! +${forwardDash}m`, 'bg-amber-600');
+          } else {
+            player.state = 'turbo';
+            player.stateTimer = 0.8;
+            sound.playCorrect();
+            this.showToast(`⚡ ROYALE DASH! +${forwardDash}m`, 'bg-pink-600');
+          }
+
+          player.distance += forwardDash;
+          if (this.answerButtons[choiceIndex]) this.answerButtons[choiceIndex].classList.add('ring-4', 'ring-green-300');
+
+        } else {
+          this.streak = Math.max(0, this.streak - 1);
+          player.state = 'stumble';
+          player.stateTimer = 0.6;
+          sound.playWrong();
+
+          document.body.classList.add('shake');
+          setTimeout(() => document.body.classList.remove('shake'), 250);
+
+          this.showToast(`Good try! Time was ${this.currentQuestion.correctTime}`, 'bg-amber-700');
+          if (this.answerButtons[choiceIndex]) this.answerButtons[choiceIndex].classList.add('ring-4', 'ring-red-400');
+          if (this.answerButtons[this.currentQuestion.correctIndex]) this.answerButtons[this.currentQuestion.correctIndex].classList.add('ring-4', 'ring-green-400');
+        }
+
+        this.updateStreakUI();
+        setTimeout(() => {
+          if (this.state === 'RACING') this.nextQuestion();
+          else this.isTransitioning = false;
+        }, 420);
+      }
+    }
+
+    showToast(msg, bgClass) {
+      if (!this.domRaceToast) return;
+      this.domRaceToast.textContent = msg;
+      this.domRaceToast.className = `pointer-events-none absolute top-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full font-black text-xs sm:text-base tracking-wider transition-all duration-300 shadow-2xl z-30 text-white border-2 border-yellow-200 ${bgClass} opacity-100 transform translate-y-0 scale-105`;
+      clearTimeout(this.toastTimeout);
+      this.toastTimeout = setTimeout(() => {
+        if (this.domRaceToast) {
+          this.domRaceToast.classList.add('opacity-0', '-translate-y-4');
+          this.domRaceToast.classList.remove('opacity-100', 'translate-y-0', 'scale-105');
+        }
+      }, 1200);
+    }
+
+    updateStreakUI() {
+      if (this.domStreak) this.domStreak.textContent = `${this.streak} STREAK`;
+      if (this.domStreakBadge) {
+        if (this.streak >= 3) {
+          this.domStreakBadge.classList.add('bg-pink-500/40', 'border-pink-400');
+          this.domStreakBadge.classList.remove('bg-purple-950/80', 'border-purple-400/50');
+        } else {
+          this.domStreakBadge.classList.remove('bg-pink-500/40', 'border-pink-400');
+          this.domStreakBadge.classList.add('bg-purple-950/80', 'border-purple-400/50');
+        }
+      }
+    }
+
+    finishRace() {
+      this.state = 'FINISHED';
+      this.isTransitioning = false;
+      sound.playWhistle();
+
+      if (this.renderer && this.renderer.particles) {
+        this.renderer.particles.spawnConfetti(this.renderer.width, this.renderer.height);
+      }
+
+      const sortedRacers = [...this.racers].sort((a, b) => b.distance - a.distance);
+      const playerRank = sortedRacers.findIndex(r => r.isPlayer) + 1;
+      const accuracy = this.totalAttempts > 0 ? Math.round((this.totalSolved / this.totalAttempts) * 100) : 100;
+      const player = this.racers[0];
+
+      const podiumSubtitle = document.getElementById('podiumSubtitle');
+      const podiumHeaderEmoji = document.getElementById('podiumHeaderEmoji');
+      const podiumRankTag = document.getElementById('podiumRankTag');
+      const winnerPlayerBigName = document.getElementById('winnerPlayerBigName');
+
+      let subjectName = 'Clock Arena';
+      if (this.currentTopic === 'addition') subjectName = 'Addition Dash';
+      if (this.currentTopic === 'subtraction') subjectName = 'Subtraction Dash';
+
+      const studentDisplayName = (this.playerName || (player ? player.name : '') || 'Champion').trim();
+      this.playerName = studentDisplayName;
+
+      if (winnerPlayerBigName) winnerPlayerBigName.textContent = studentDisplayName.toUpperCase();
+
+      if (playerRank === 1) {
+        if (podiumHeaderEmoji) podiumHeaderEmoji.textContent = '👑';
+        if (podiumRankTag) {
+          podiumRankTag.textContent = '🏆 1ST PLACE GRAND CHAMPION 🏆';
+          podiumRankTag.className = 'text-[11px] sm:text-xs font-black uppercase tracking-widest text-amber-300 mb-1 px-3.5 py-1 rounded-full bg-amber-500/25 border border-amber-400/80';
+        }
+        if (podiumSubtitle) {
+          podiumSubtitle.textContent = `Spectacular run, ${studentDisplayName}! You covered ${Math.floor(player.distance)}m in ${subjectName} to win Gold!`;
+        }
+
+        setTimeout(() => {
+          sound.playVictory(true);
+          sound.playFireworkBoom(true);
+        }, 300);
+
+        if (this.fireworksManager) {
+          setTimeout(() => this.fireworksManager.startCelebration(), 250);
+        }
+
+      } else if (playerRank === 2) {
+        if (podiumHeaderEmoji) podiumHeaderEmoji.textContent = '🥈';
+        if (podiumRankTag) {
+          podiumRankTag.textContent = '🥈 2ND PLACE SILVER MEDALIST 🥈';
+          podiumRankTag.className = 'text-[11px] sm:text-xs font-black uppercase tracking-widest text-cyan-200 mb-1 px-3.5 py-1 rounded-full bg-cyan-950/80 border border-cyan-400/60';
+        }
+        if (podiumSubtitle) {
+          podiumSubtitle.textContent = `Strong race, ${studentDisplayName}! You covered ${Math.floor(player.distance)}m in ${subjectName} to take Silver!`;
+        }
+        setTimeout(() => sound.playVictory(false), 400);
+
+      } else if (playerRank === 3) {
+        if (podiumHeaderEmoji) podiumHeaderEmoji.textContent = '🥉';
+        if (podiumRankTag) {
+          podiumRankTag.textContent = '🥉 3RD PLACE BRONZE MEDALIST 🥉';
+          podiumRankTag.className = 'text-[11px] sm:text-xs font-black uppercase tracking-widest text-amber-200 mb-1 px-3.5 py-1 rounded-full bg-amber-950/80 border border-amber-600/60';
+        }
+        if (podiumSubtitle) {
+          podiumSubtitle.textContent = `Great effort, ${studentDisplayName}! You covered ${Math.floor(player.distance)}m in ${subjectName} for Bronze!`;
+        }
+        setTimeout(() => sound.playVictory(false), 400);
+
+      } else {
+        if (podiumHeaderEmoji) podiumHeaderEmoji.textContent = '🎖️';
+        if (podiumRankTag) {
+          podiumRankTag.textContent = '🎖️ 4TH PLACE RUNNER-UP 🎖️';
+          podiumRankTag.className = 'text-[11px] sm:text-xs font-black uppercase tracking-widest text-purple-200 mb-1 px-3.5 py-1 rounded-full bg-purple-900/60 border border-purple-400/40';
+        }
+        if (podiumSubtitle) {
+          podiumSubtitle.textContent = `You dashed ${Math.floor(player.distance)}m, ${studentDisplayName}! Practice more to take the throne!`;
+        }
+        setTimeout(() => sound.playVictory(false), 400);
+      }
+
+      const r1 = sortedRacers[0];
+      const r2 = sortedRacers[1];
+      const r3 = sortedRacers[2];
+      const r4 = sortedRacers[3];
+
+      const safeSetText = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+
+      if (r1) {
+        safeSetText('podiumRacer1', r1.avatarEmoji);
+        safeSetText('podiumName1', r1.isPlayer ? `${studentDisplayName} (YOU)` : r1.name);
+        safeSetText('podiumDist1', `${Math.floor(r1.distance)}m`);
+      }
+      if (r2) {
+        safeSetText('podiumRacer2', r2.avatarEmoji);
+        safeSetText('podiumName2', r2.isPlayer ? `${studentDisplayName} (YOU)` : r2.name);
+        safeSetText('podiumDist2', `${Math.floor(r2.distance)}m`);
+      }
+      if (r3) {
+        safeSetText('podiumRacer3', r3.avatarEmoji);
+        safeSetText('podiumName3', r3.isPlayer ? `${studentDisplayName} (YOU)` : r3.name);
+        safeSetText('podiumDist3', `${Math.floor(r3.distance)}m`);
+      }
+      if (r4) {
+        safeSetText('podiumRacer4', r4.avatarEmoji);
+        safeSetText('podiumName4', r4.isPlayer ? `${studentDisplayName} (YOU)` : r4.name);
+        safeSetText('podiumDist4', `${Math.floor(r4.distance)}m`);
+      }
+
+      safeSetText('statDistance', `${Math.floor(player ? player.distance : 0)}m`);
+      safeSetText('statAccuracy', `${accuracy}%`);
+      safeSetText('statSolved', `${this.totalSolved}`);
+      safeSetText('statStreak', `${this.maxStreak} 🔥`);
+
+      /* Save to career history */
+      const newResult = {
+        name: studentDisplayName,
+        distance: Math.floor(player ? player.distance : 0),
+        accuracy: accuracy,
+        topic: subjectName,
+        date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })
+      };
+      
+      this.saveRaceResult(newResult);
+      this.renderPlayerHistory(studentDisplayName);
+
+      const resultsOverlay = document.getElementById('resultsOverlay');
+      if (resultsOverlay) resultsOverlay.classList.remove('hidden');
+    }
+
+    saveRaceResult(result) {
+      try {
+        let history = JSON.parse(localStorage.getItem('mosyMathHistory')) || [];
+        history.unshift(result);
+        if (history.length > 50) history = history.slice(0, 50); // Keep last 50 matches overall
+        localStorage.setItem('mosyMathHistory', JSON.stringify(history));
+      } catch (e) {
+        console.warn('Could not save to localStorage:', e);
+      }
+    }
+
+    renderPlayerHistory(playerName) {
+      const historyList = document.getElementById('playerHistoryList');
+      if (!historyList) return;
+      historyList.innerHTML = '';
+      
+      let history = [];
+      try { 
+        history = JSON.parse(localStorage.getItem('mosyMathHistory')) || []; 
+      } catch (e) {}
+      
+      // Filter for the exact player name, taking up to 10 most recent
+      const playerRecords = history.filter(r => r.name.toLowerCase() === playerName.toLowerCase()).slice(0, 10);
+      
+      if (playerRecords.length === 0) {
+        historyList.innerHTML = '<div class="text-sm lg:text-base text-purple-300/60 text-center py-8 font-bold">No recent records found. Go set a high score!</div>';
+        return;
+      }
+      
+      playerRecords.forEach((record, index) => {
+        const isLatest = index === 0; // The first one in the filtered array is the most recent
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between p-3 lg:p-4 rounded-xl border-2 ' + (isLatest ? 'bg-amber-500/20 border-amber-400 shadow-[0_0_15px_rgba(255,213,79,0.3)]' : 'bg-slate-900/80 border-white/10') + ' shrink-0 shadow-md transition-all hover:bg-slate-800';
+        row.innerHTML = `
+          <div class="flex flex-col gap-1">
+            <span class="font-black text-base sm:text-lg lg:text-3xl ${isLatest ? 'text-amber-300 drop-shadow-[0_0_8px_rgba(255,213,79,0.8)]' : 'text-purple-200'} font-['Cinzel'] uppercase tracking-wider leading-none">${record.name}</span>
+            <span class="text-[10px] lg:text-xs text-purple-300/80 font-bold uppercase tracking-wider">${record.topic} • ${record.date}</span>
+          </div>
+          <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 pr-1">
+            <div class="flex flex-col items-end">
+              <span class="text-emerald-400 font-mono font-black text-sm sm:text-base lg:text-2xl">${record.accuracy}%</span>
+              <span class="text-[9px] lg:text-[11px] text-emerald-200/80 uppercase leading-none font-bold tracking-widest mt-0.5">ACC</span>
+            </div>
+            <div class="flex flex-col items-end">
+              <span class="text-cyan-300 font-mono font-black text-lg sm:text-xl lg:text-4xl drop-shadow-md">${record.distance}m</span>
+              <span class="text-[9px] lg:text-[11px] text-cyan-200/80 uppercase leading-none font-bold tracking-widest mt-0.5">DIST</span>
+            </div>
+          </div>
+        `;
+        historyList.appendChild(row);
+      });
+    }
+
+    loop(timestamp) {
+      try {
+        const dt = Math.min(0.1, Math.max(0.001, (timestamp - this.lastTimestamp) / 1000 || 0.016));
+        this.lastTimestamp = timestamp;
+
+        if (this.state === 'RACING') {
+          this.raceTimeLeft = Math.max(0, this.raceTimeLeft - dt);
+          const secFloor = Math.ceil(this.raceTimeLeft);
+
+          if (secFloor <= 10 && secFloor > 0 && secFloor < this.lastSecondFloor) {
+            sound.playWarningTick();
+            if (this.domStopwatchHud) this.domStopwatchHud.classList.add('anim-timer-alert', 'border-red-500');
+            if (this.domCountdownText) {
+              this.domCountdownText.classList.remove('text-amber-300');
+              this.domCountdownText.classList.add('text-red-400');
+            }
+          }
+          this.lastSecondFloor = secFloor;
+
+          const mm = Math.floor(this.raceTimeLeft / 60);
+          const ss = Math.floor(this.raceTimeLeft % 60);
+          if (this.domCountdownText) {
+            this.domCountdownText.textContent = `${mm < 10 ? '0' : ''}${mm}:${ss < 10 ? '0' : ''}${ss}`;
+          }
+
+          const timePct = (this.raceTimeLeft / this.totalRaceDuration) * 100;
+          if (this.domTimeProgressBar) this.domTimeProgressBar.style.width = `${timePct}%`;
+
+          if (this.bonusTimeLeft > 0) {
+            this.bonusTimeLeft = Math.max(0, this.bonusTimeLeft - dt);
+            const bonusPct = (this.bonusTimeLeft / this.bonusMax) * 100;
+            if (this.domBonusBar) this.domBonusBar.style.width = `${bonusPct}%`;
+            if (this.domBonusTimerText) this.domBonusTimerText.textContent = `${this.bonusTimeLeft.toFixed(1)}s`;
+          }
+
+          const player = this.racers ? this.racers[0] : null;
+          if (player) {
+            this.racers.forEach(r => r.update(dt, player.distance));
+            if (this.domPlayerDist) this.domPlayerDist.textContent = `${Math.floor(player.distance)}m`;
+
+            const sorted = [...this.racers].sort((a, b) => b.distance - a.distance);
+            const currentRank = sorted.findIndex(r => r.isPlayer) + 1;
+            const suffixes = ['1st 👑', '2nd 🥈', '3rd 🥉', '4th 🎖️'];
+            if (this.domLiveRankText) this.domLiveRankText.textContent = suffixes[currentRank - 1] || '1st 👑';
+
+            if (this.domLiveRankBadge) {
+              if (currentRank === 1) {
+                this.domLiveRankBadge.className = 'flex items-center gap-1.5 px-3 py-1 bg-amber-500/25 border-2 border-amber-400 rounded-full shadow-inner';
+                if (this.domLiveRankText) this.domLiveRankText.className = 'text-sm sm:text-base font-black text-amber-300';
+              } else if (currentRank === 2) {
+                this.domLiveRankBadge.className = 'flex items-center gap-1.5 px-3 py-1 bg-cyan-950/80 border-2 border-cyan-400/60 rounded-full shadow-inner';
+                if (this.domLiveRankText) this.domLiveRankText.className = 'text-sm sm:text-base font-black text-cyan-200';
+              } else {
+                this.domLiveRankBadge.className = 'flex items-center gap-1.5 px-3 py-1 bg-purple-950/80 border border-purple-400/40 rounded-full shadow-inner';
+                if (this.domLiveRankText) this.domLiveRankText.className = 'text-sm sm:text-base font-black text-purple-200';
+              }
+            }
+          }
+
+          if (this.raceTimeLeft <= 0) {
+            this.finishRace();
+          }
+        }
+
+        if (this.renderer && this.racers && this.racers[0]) {
+          this.renderer.render(this.racers, this.racers[0], dt);
+        }
+      } catch (err) {
+        console.error("Frame loop safety guard caught:", err);
+      }
+      requestAnimationFrame((t) => this.loop(t));
+    }
+  }
+
+  window.addEventListener('load', () => {
+    window.game = new TimeDashersGame();
+  });
+  </script>
+
+</body>
+</html>
